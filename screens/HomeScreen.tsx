@@ -3,16 +3,18 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-nati
 import { Ionicons } from '@expo/vector-icons';
 
 import { useThemeContext } from '../context/ThemeContext';
-import { lightColors, darkColors } from '../constants/colors';
+import { useThemeColors } from '../hooks/useThemeColor';
 import typography from '../constants/typography';
 
 export default function HomeScreen() {
 
-  const { theme, toggleTheme } = useThemeContext();
-  const colors = theme === 'dark' ? darkColors : lightColors;
+  const { toggleTheme, theme } = useThemeContext();
+  const colors = useThemeColors();
 
   return (
-    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}>
+    <ScrollView
+      contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}
+      style={{ backgroundColor: colors.background }}>
 
       <View style={styles.headerContainer}>
         <Text style={[styles.headerText, { color: colors.textPrimary }]}>🏠 Bun venit, Maria!</Text>
