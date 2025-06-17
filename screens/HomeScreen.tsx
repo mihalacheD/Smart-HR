@@ -1,37 +1,58 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+
+import { useThemeContext } from '../context/ThemeContext';
+import { lightColors, darkColors } from '../constants/colors';
+import typography from '../constants/typography';
 
 export default function HomeScreen() {
-  return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>🏠 Bun venit, Maria!</Text>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>📄 Fluturaș salarial</Text>
-        <Text style={styles.cardText}>Aprilie 2025</Text>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Descarcă PDF</Text>
+  const { theme, toggleTheme } = useThemeContext();
+  const colors = theme === 'dark' ? darkColors : lightColors;
+
+  return (
+    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}>
+
+      <View style={styles.headerContainer}>
+        <Text style={[styles.headerText, { color: colors.textPrimary }]}>🏠 Bun venit, Maria!</Text>
+        <TouchableOpacity onPress={toggleTheme} style={[styles.themeToggle, { backgroundColor: colors.card }]}>
+          <Ionicons
+            name={theme === 'dark' ? 'sunny' : 'moon'}
+            size={22}
+            color={theme === 'dark' ? '#FFD700' : '#555'}
+          />
         </TouchableOpacity>
       </View>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>📅 Cereri recente</Text>
-        <Text style={styles.cardText}>✅ Concediu: 3-5 Iunie</Text>
-        <Text style={styles.cardText}>⏳ Work from home: 10 Iunie</Text>
+
+      <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <Text style={[styles.cardTitle, { color: colors.textPrimary }]}>📄 Fluturaș salarial</Text>
+        <Text style={[styles.cardText, { color: colors.textSecondary }]}>Aprilie 2025</Text>
+        <TouchableOpacity style={[styles.button, { backgroundColor: colors.accent }]}>
+          <Text style={[styles.buttonText, { color: colors.card }]}>Descarcă PDF</Text>
+        </TouchableOpacity>
       </View>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>💬 Mesaj intern</Text>
-        <Text style={styles.cardText}>"Ședință la ora 10." — Andrei</Text>
+      {/* alte carduri la fel... */}
+      <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <Text style={[styles.cardTitle, { color: colors.textPrimary }]}>📅 Cereri recente</Text>
+        <Text style={[styles.cardText, { color: colors.textSecondary }]}>✅ Concediu: 3-5 Iunie</Text>
+        <Text style={[styles.cardText, { color: colors.textSecondary }]}>⏳ Work from home: 10 Iunie</Text>
       </View>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>📢 Anunț intern</Text>
-        <Text style={styles.cardText}>Platforma intră în mentenanță pe 20 Iunie.</Text>
+      <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <Text style={[styles.cardTitle, { color: colors.textPrimary }]}>💬 Mesaj intern</Text>
+        <Text style={[styles.cardText, { color: colors.textSecondary }]}>“Ședință la ora 10.” — Andrei</Text>
       </View>
 
-      <TouchableOpacity style={styles.hrBot}>
-        <Text style={styles.hrBotText}>🤖 Deschide HR Bot</Text>
+      <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <Text style={[styles.cardTitle, { color: colors.textPrimary }]}>📢 Anunț intern</Text>
+        <Text style={[styles.cardText, { color: colors.textSecondary }]}>Platforma intră în mentenanță pe 20 Iunie.</Text>
+      </View>
+
+      <TouchableOpacity style={[styles.hrBot, { backgroundColor: colors.secondary }]}>
+        <Text style={[styles.hrBotText, { color: colors.card }]}>🤖 Deschide HR Bot</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -40,19 +61,27 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    backgroundColor: '#f9f9f9',
   },
-  header: {
-    fontSize: 26,
-    fontWeight: '700',
+  themeToggle: {
+    padding: 6,
+    borderRadius: 20,
+    backgroundColor: '#eee'
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 25,
-    color: '#1f2937',
+  },
+  headerText: {
+    fontSize: typography.fontSize.xxl,
+    fontWeight: 'bold',
   },
   card: {
-    backgroundColor: '#fff',
     padding: 18,
     borderRadius: 12,
     marginBottom: 20,
+    borderWidth: 1,
     shadowColor: '#000',
     shadowOpacity: 0.05,
     shadowRadius: 10,
@@ -60,37 +89,31 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   cardTitle: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: typography.fontSize.lg,
+    fontWeight: 'semibold',
     marginBottom: 8,
-    color: '#111827',
   },
   cardText: {
-    fontSize: 15,
-    color: '#374151',
+    fontSize: typography.fontSize.base,
     marginBottom: 4,
   },
   button: {
     marginTop: 10,
-    backgroundColor: '#2563eb',
     paddingVertical: 10,
     borderRadius: 8,
   },
   buttonText: {
-    color: '#fff',
     textAlign: 'center',
-    fontWeight: '600',
+    fontWeight: 'semibold',
   },
   hrBot: {
     marginTop: 30,
-    backgroundColor: '#10b981',
     paddingVertical: 14,
     borderRadius: 10,
   },
   hrBotText: {
     textAlign: 'center',
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: typography.fontSize.base,
+    fontWeight: 'semibold',
   },
 });
