@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootTabParamList } from '../types/navigation';
 import { Ionicons } from '@expo/vector-icons';
+import { Alert } from 'react-native';
 
 import { useThemeContext } from '../context/ThemeContext';
 import { useThemeColors } from '../hooks/useThemeColor';
@@ -46,7 +47,9 @@ export default function HomeScreen() {
       </View>
 
       <TouchableOpacity onPress={() => navigation.navigate('Payslip')}>
-        <Card title="Fluturaș salarial" iconName='file-document-outline'>
+        <Card title="Your Payslips" iconName='file-document-outline' buttonText="Download PDF" onButtonPress={() => {
+          Alert.alert("Download Started", "We're preparing your payslip PDF");
+        }}>
           <ThemedText>Aprilie 2025</ThemedText>
         </Card>
       </TouchableOpacity>
