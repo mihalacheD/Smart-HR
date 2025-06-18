@@ -42,7 +42,7 @@ export default function MainTabs() {
         component={HomeScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="home-variant" size={size} color={color} />
+            <MaterialCommunityIcons name="home" size={size} color={color} />
           ),
         }}
       />
@@ -51,7 +51,7 @@ export default function MainTabs() {
         component={ChatScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="message-text-outline" size={size} color={color} />
+            <MaterialCommunityIcons name="message-text" size={size} color={color} />
           ),
         }}
       />
@@ -60,7 +60,7 @@ export default function MainTabs() {
         component={PayslipScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="file-document-outline" size={size} color={color} />
+            <MaterialCommunityIcons name="file-document" size={size} color={color} />
           ),
         }}
       />
@@ -69,7 +69,7 @@ export default function MainTabs() {
         component={RequestsScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="calendar-check" size={size} color={color} />
+            <MaterialCommunityIcons name="calendar-edit" size={size} color={color} />
           ),
         }}
       />

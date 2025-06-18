@@ -5,6 +5,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useThemeContext } from '../context/ThemeContext';
 import { useThemeColors } from '../hooks/useThemeColor';
 import typography from '../constants/typography';
+import Card from '../components/Card';
+import ThemedText from '../components/ThemedText';
 
 export default function HomeScreen() {
 
@@ -17,41 +19,42 @@ export default function HomeScreen() {
       style={{ backgroundColor: colors.background }}>
 
       <View style={styles.headerContainer}>
-        <Text style={[styles.headerText, { color: colors.textPrimary }]}>🏠 Bun venit, Maria!</Text>
+        <View style={styles.headerLeft}>
+          <Ionicons name="briefcase" size={28} color="#166AF9" />
+          <ThemedText
+            style={styles.headerText}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            Bun venit, Maria!
+          </ThemedText>
+        </View>
+
         <TouchableOpacity onPress={toggleTheme} style={[styles.themeToggle, { backgroundColor: colors.card }]}>
           <Ionicons
             name={theme === 'dark' ? 'sunny' : 'moon'}
-            size={22}
+            size={20}
             color={theme === 'dark' ? '#FFD700' : '#555'}
           />
         </TouchableOpacity>
       </View>
 
+      <Card title="Fluturaș salarial" iconName='file-document-outline' buttonText="Descarcă PDF" onButtonPress={() => alert('Download')}>
+        <ThemedText>Aprilie 2025</ThemedText>
+      </Card>
 
-      <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
-        <Text style={[styles.cardTitle, { color: colors.textPrimary }]}>📄 Fluturaș salarial</Text>
-        <Text style={[styles.cardText, { color: colors.textSecondary }]}>Aprilie 2025</Text>
-        <TouchableOpacity style={[styles.button, { backgroundColor: colors.accent }]}>
-          <Text style={[styles.buttonText, { color: colors.card }]}>Descarcă PDF</Text>
-        </TouchableOpacity>
-      </View>
+      <Card title="Cereri recente" iconName="calendar-clock">
+        <ThemedText>Concediu: 3-5 Iunie</ThemedText>
+        <ThemedText>Work from home: 10 Iunie</ThemedText>
+      </Card>
 
-      {/* alte carduri la fel... */}
-      <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
-        <Text style={[styles.cardTitle, { color: colors.textPrimary }]}>📅 Cereri recente</Text>
-        <Text style={[styles.cardText, { color: colors.textSecondary }]}>✅ Concediu: 3-5 Iunie</Text>
-        <Text style={[styles.cardText, { color: colors.textSecondary }]}>⏳ Work from home: 10 Iunie</Text>
-      </View>
+      <Card title="Mesaj intern" iconName='chat-outline'>
+        <ThemedText>“Ședință la ora 10.” — Andrei</ThemedText>
+      </Card>
 
-      <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
-        <Text style={[styles.cardTitle, { color: colors.textPrimary }]}>💬 Mesaj intern</Text>
-        <Text style={[styles.cardText, { color: colors.textSecondary }]}>“Ședință la ora 10.” — Andrei</Text>
-      </View>
-
-      <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
-        <Text style={[styles.cardTitle, { color: colors.textPrimary }]}>📢 Anunț intern</Text>
-        <Text style={[styles.cardText, { color: colors.textSecondary }]}>Platforma intră în mentenanță pe 20 Iunie.</Text>
-      </View>
+      <Card title="Anunț intern" iconName='bell-outline'>
+        <ThemedText>Platforma intră în mentenanță pe 20 Iunie.</ThemedText>
+      </Card>
 
       <TouchableOpacity style={[styles.hrBot, { backgroundColor: colors.secondary }]}>
         <Text style={[styles.hrBotText, { color: colors.card }]}>🤖 Deschide HR Bot</Text>
@@ -75,38 +78,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 25,
   },
+  headerLeft: {
+    maxWidth: '80%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 10,
+  },
   headerText: {
     fontSize: typography.fontSize.xxl,
     fontWeight: 'bold',
-  },
-  card: {
-    padding: 18,
-    borderRadius: 12,
-    marginBottom: 20,
-    borderWidth: 1,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 3,
-  },
-  cardTitle: {
-    fontSize: typography.fontSize.lg,
-    fontWeight: 'semibold',
-    marginBottom: 8,
-  },
-  cardText: {
-    fontSize: typography.fontSize.base,
-    marginBottom: 4,
-  },
-  button: {
-    marginTop: 10,
-    paddingVertical: 10,
-    borderRadius: 8,
-  },
-  buttonText: {
-    textAlign: 'center',
-    fontWeight: 'semibold',
+    marginLeft: 10,
+    flexShrink: 1,
   },
   hrBot: {
     marginTop: 30,
