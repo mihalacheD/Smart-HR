@@ -1,5 +1,8 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootTabParamList } from '../types/navigation';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useThemeContext } from '../context/ThemeContext';
@@ -12,6 +15,9 @@ export default function HomeScreen() {
 
   const { toggleTheme, theme } = useThemeContext();
   const colors = useThemeColors();
+
+  const navigation = useNavigation<NativeStackNavigationProp<RootTabParamList>>();
+
 
   return (
     <ScrollView
@@ -39,24 +45,32 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
 
-      <Card title="Fluturaș salarial" iconName='file-document-outline' buttonText="Descarcă PDF" onButtonPress={() => alert('Download')}>
-        <ThemedText>Aprilie 2025</ThemedText>
-      </Card>
+      <TouchableOpacity onPress={() => navigation.navigate('Payslip')}>
+        <Card title="Fluturaș salarial" iconName='file-document-outline'>
+          <ThemedText>Aprilie 2025</ThemedText>
+        </Card>
+      </TouchableOpacity>
 
-      <Card title="Cereri recente" iconName="calendar-clock">
-        <ThemedText>Concediu: 3-5 Iunie</ThemedText>
-        <ThemedText>Work from home: 10 Iunie</ThemedText>
-      </Card>
+      <TouchableOpacity onPress={() => navigation.navigate('Requests')}>
+        <Card title="Cereri recente" iconName="calendar-clock">
+          <ThemedText>Concediu: 3-5 Iunie</ThemedText>
+          <ThemedText>Work from home: 10 Iunie</ThemedText>
+        </Card>
+      </TouchableOpacity>
 
-      <Card title="Mesaj intern" iconName='chat-outline'>
-        <ThemedText>“Ședință la ora 10.” — Andrei</ThemedText>
-      </Card>
+      <TouchableOpacity onPress={() => navigation.navigate('Chat')}>
+        <Card title="Mesaj intern" iconName='chat-outline'>
+          <ThemedText>“Ședință la ora 10.” — Andrei</ThemedText>
+        </Card>
+      </TouchableOpacity>
 
-      <Card title="Anunț intern" iconName='bell-outline'>
-        <ThemedText>Platforma intră în mentenanță pe 20 Iunie.</ThemedText>
-      </Card>
+      <TouchableOpacity onPress={() => navigation.navigate('Chat')}>
+        <Card title="Anunț intern" iconName='bell-outline'>
+          <ThemedText>Platforma intră în mentenanță pe 20 Iunie.</ThemedText>
+        </Card>
+      </TouchableOpacity>
 
-      <TouchableOpacity style={[styles.hrBot, { backgroundColor: colors.secondary }]}>
+      <TouchableOpacity style={[styles.hrBot, { backgroundColor: colors.secondary }]} onPress={() => navigation.navigate('HRBot')}>
         <Text style={[styles.hrBotText, { color: colors.card }]}>🤖 Deschide HR Bot</Text>
       </TouchableOpacity>
     </ScrollView>

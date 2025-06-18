@@ -1,5 +1,6 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { RootTabParamList } from './types/navigation';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useThemeColors } from './hooks/useThemeColor';
 import typography from './constants/typography';
@@ -10,7 +11,7 @@ import PayslipScreen from './screens/PayslipScreen';
 import RequestsScreen from './screens/RequestScreen';
 import HRBotScreen from './screens/HRBotScreen';
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator<RootTabParamList>();
 
 export default function MainTabs() {
   const colors = useThemeColors();
