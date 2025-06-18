@@ -7,6 +7,7 @@ import Button from '../components/Button';
 import ThemedText from '../components/ThemedText';
 import { useThemeContext } from '../context/ThemeContext';
 import { lightColors, darkColors } from '../constants/colors';
+import YearPickerModal from '../components/YearPickerModal';
 
 const dummyPayslips = [
   { month: 'May 2025', file: 'payslip-may-2025.pdf', year: 2025 },
@@ -16,10 +17,15 @@ const dummyPayslips = [
 
 export default function PayslipScreen() {
 
+  const [selectedYear, setSelectedYear] = useState(2025);
+
+  const filteredPayslips = dummyPayslips.filter(item =>
+    item.month.includes(selectedYear.toString())
+  );
+
+
   const { theme } = useThemeContext();
   const colors = theme === 'dark' ? darkColors : lightColors;
-
-
 
   const handleDownload = (file: string) => {
     Alert.alert(`Downloading: ${file}`);
@@ -32,25 +38,41 @@ export default function PayslipScreen() {
         Access and download your salary statements securely.
       </ThemedText>
 
+      <YearPickerModal selectedYear={selectedYear} onChange={setSelectedYear} />
 
-      <FlatList
-        data={dummyPayslips}
-        keyExtractor={(item) => item.file}
-        renderItem={({ item }) => (
-          <Card title={item.month} iconName="file-pdf-box">
-            <Button title="Download" onPress={() => handleDownload(item.file)} />
-          </Card>
-        )}
-        contentContainerStyle={{ paddingBottom: 30 }}
-      />
-    </View>
-  );
+      {filteredPayslips.length === 0 ? (
+        <View style={styles.emptyState}>
+          <ThemedText style={styles.emptyText}>No payslips available for {selectedYear}.</ThemedText>
+        </View>
+      ) : (
+        <FlatList
+          data={filteredPayslips}
+          keyExtractor={(item) => item.file}
+          renderItem={({ item }) => (
+            <Card title={item.month} iconName="file-pdf-box">
+              <Button title="Download" onPress={() => handleDownload(item.file)} />
+            </Card>
+          )}
+          contentContainerStyle={{ paddingBottom: 30 }}
+        />
+      )
+      }
+    </View>)
 }
 
 const styles = StyleSheet.create({
   container: {
     padding: 20,
     flex: 1,
+  },
+  emptyState: {
+    marginTop: 40,
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: 18,
+    opacity: 0.7,
+    textAlign: 'center',
   },
   title: {
     fontSize: 30,
