@@ -4,4 +4,5 @@ export type RootTabParamList = {
   Payslip: undefined;
   Requests: undefined;
   HRBot: undefined;
+  Employees: undefined;
 };

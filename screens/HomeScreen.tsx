@@ -60,7 +60,6 @@ export default function HomeScreen() {
         </Card>
       </TouchableOpacity>
 
-      {/* restul la fel */}
       <TouchableOpacity onPress={() => navigation.navigate('Requests')}>
         <Card title="Cereri recente" iconName="calendar-clock">
           <ThemedText>Concediu: 3-5 Iunie</ThemedText>
@@ -80,9 +79,15 @@ export default function HomeScreen() {
         </Card>
       </TouchableOpacity>
 
-      <TouchableOpacity style={[styles.hrBot, { backgroundColor: colors.secondary }]} onPress={() => navigation.navigate('HRBot')}>
-        <Text style={[styles.hrBotText, { color: colors.card }]}>🤖 Deschide HR Bot</Text>
-      </TouchableOpacity>
+      {role === 'employee' && (
+        <TouchableOpacity
+          style={[styles.hrBot, { backgroundColor: colors.secondary }]}
+          onPress={() => navigation.navigate('HRBot')}
+        >
+          <Text style={[styles.hrBotText, { color: colors.card }]}>🤖 Deschide HR Bot</Text>
+        </TouchableOpacity>
+      )}
+
     </ScrollView>
   );
 }

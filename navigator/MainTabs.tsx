@@ -10,14 +10,19 @@ import ChatScreen from '../screens/ChatScreen';
 import PayslipScreen from '../screens/PayslipScreen';
 import RequestsScreen from '../screens/RequestScreen';
 import HRBotScreen from '../screens/HRBotScreen';
+import { useAuth } from '../context/AuthContext';
+import EmployeesScreen from '../screens/EmployeesScreen';
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
 export default function MainTabs() {
+
+  const { user, role, logout } = useAuth();
   const colors = useThemeColors();
 
   return (
     <Tab.Navigator
+      id={undefined}
       initialRouteName="Home"
       screenOptions={{
         tabBarActiveTintColor: colors.accent,
@@ -74,15 +79,30 @@ export default function MainTabs() {
           ),
         }}
       />
-      <Tab.Screen
-        name="HRBot"
-        component={HRBotScreen}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="robot-happy" size={size} color={color} />
-          ),
-        }}
-      />
+      {role === 'employee' && (
+        <Tab.Screen
+          name="HRBot"
+          component={HRBotScreen}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons name="robot-happy" size={size} color={color} />
+            ),
+          }}
+        />
+      )}
+
+      {role === 'hr' && (
+        <Tab.Screen
+          name="Employees"
+          component={EmployeesScreen}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons name="account-group" size={size} color={color} />
+            ),
+          }}
+        />
+      )}
+
     </Tab.Navigator>
   );
 }
