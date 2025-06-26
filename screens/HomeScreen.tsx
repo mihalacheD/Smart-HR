@@ -1,59 +1,64 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootTabParamList } from '../types/navigation';
 import { Ionicons } from '@expo/vector-icons';
-import { Alert } from 'react-native';
 
 import { useThemeContext } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 import { useThemeColors } from '../hooks/useThemeColor';
 import typography from '../constants/typography';
 import Card from '../components/Card';
 import ThemedText from '../components/ThemedText';
 
 export default function HomeScreen() {
+  const { user, role, logout } = useAuth();
 
   const { toggleTheme, theme } = useThemeContext();
   const colors = useThemeColors();
 
   const navigation = useNavigation<NativeStackNavigationProp<RootTabParamList>>();
 
-
   return (
     <ScrollView
       contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}
-      style={{ backgroundColor: colors.background }}>
-
+      style={{ backgroundColor: colors.background }}
+    >
       <View style={styles.headerContainer}>
         <View style={styles.headerLeft}>
           <Ionicons name="briefcase" size={28} color="#166AF9" />
-          <ThemedText
-            style={styles.headerText}
-            numberOfLines={1}
-            ellipsizeMode="tail"
-          >
-            Bun venit, Maria!
+          <ThemedText style={styles.headerText} numberOfLines={1} ellipsizeMode="tail">
+            Bun venit, {user?.email ?? 'Utilizator'}!
           </ThemedText>
         </View>
 
         <TouchableOpacity onPress={toggleTheme} style={[styles.themeToggle, { backgroundColor: colors.card }]}>
-          <Ionicons
-            name={theme === 'dark' ? 'sunny' : 'moon'}
-            size={20}
-            color={theme === 'dark' ? '#FFD700' : '#555'}
-          />
+          <Ionicons name={theme === 'dark' ? 'sunny' : 'moon'} size={20} color={theme === 'dark' ? '#FFD700' : '#555'} />
         </TouchableOpacity>
       </View>
 
+      {/* Buton logout */}
+      <Button
+        title="Logout"
+        onPress={async () => {
+          try {
+            await logout();
+          } catch (error) {
+            Alert.alert('Error', 'Logout failed');
+          }
+        }}
+      />
+
       <TouchableOpacity onPress={() => navigation.navigate('Payslip')}>
-        <Card title="Your Payslips" iconName='file-document-outline' buttonText="Download PDF" onButtonPress={() => {
+        <Card title="Your Payslips" iconName="file-document-outline" buttonText="Download PDF" onButtonPress={() => {
           Alert.alert("Download Started", "We're preparing your payslip PDF");
         }}>
           <ThemedText>Aprilie 2025</ThemedText>
         </Card>
       </TouchableOpacity>
 
+      {/* restul la fel */}
       <TouchableOpacity onPress={() => navigation.navigate('Requests')}>
         <Card title="Cereri recente" iconName="calendar-clock">
           <ThemedText>Concediu: 3-5 Iunie</ThemedText>
@@ -62,13 +67,13 @@ export default function HomeScreen() {
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate('Chat')}>
-        <Card title="Mesaj intern" iconName='chat-outline'>
+        <Card title="Mesaj intern" iconName="chat-outline">
           <ThemedText>“Ședință la ora 10.” — Andrei</ThemedText>
         </Card>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate('Chat')}>
-        <Card title="Anunț intern" iconName='bell-outline'>
+        <Card title="Anunț intern" iconName="bell-outline">
           <ThemedText>Platforma intră în mentenanță pe 20 Iunie.</ThemedText>
         </Card>
       </TouchableOpacity>
@@ -87,7 +92,7 @@ const styles = StyleSheet.create({
   themeToggle: {
     padding: 6,
     borderRadius: 20,
-    backgroundColor: '#eee'
+    backgroundColor: '#eee',
   },
   headerContainer: {
     flexDirection: 'row',

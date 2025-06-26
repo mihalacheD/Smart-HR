@@ -1,15 +1,15 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { RootTabParamList } from './types/navigation';
+import { RootTabParamList } from '../types/navigation';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useThemeColors } from './hooks/useThemeColor';
-import typography from './constants/typography';
+import { useThemeColors } from '../hooks/useThemeColor';
+import typography from '../constants/typography';
 
-import HomeScreen from './screens/HomeScreen';
-import ChatScreen from './screens/ChatScreen';
-import PayslipScreen from './screens/PayslipScreen';
-import RequestsScreen from './screens/RequestScreen';
-import HRBotScreen from './screens/HRBotScreen';
+import HomeScreen from '../screens/HomeScreen';
+import ChatScreen from '../screens/ChatScreen';
+import PayslipScreen from '../screens/PayslipScreen';
+import RequestsScreen from '../screens/RequestScreen';
+import HRBotScreen from '../screens/HRBotScreen';
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 

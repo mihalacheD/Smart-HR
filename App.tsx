@@ -6,7 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import { ThemeProvider, useThemeContext } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import { darkColors, lightColors } from './constants/colors';
-import MainTabs from './MainTabs';
+import RootNavigator from './navigator/RootNavigator';
 
 
 
@@ -29,7 +29,7 @@ function AppWithTheme() {
       <StatusBar style={theme === 'dark' ? 'light' : 'dark'} backgroundColor={colors.background} />
       <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
         <NavigationContainer>
-          <MainTabs />
+          <RootNavigator/>
         </NavigationContainer>
       </SafeAreaView>
     </>
