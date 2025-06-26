@@ -5,6 +5,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootTabParamList } from '../types/navigation';
 import { Ionicons } from '@expo/vector-icons';
 
+import CustomButton from '../components/Button';
 import { useThemeContext } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { useThemeColors } from '../hooks/useThemeColor';
@@ -39,7 +40,7 @@ export default function HomeScreen() {
       </View>
 
       {/* Buton logout */}
-      <Button
+      <CustomButton
         title="Logout"
         onPress={async () => {
           try {
@@ -48,6 +49,7 @@ export default function HomeScreen() {
             Alert.alert('Error', 'Logout failed');
           }
         }}
+        style={{ marginBottom: 20 }} // spațiere sub header
       />
 
       <TouchableOpacity onPress={() => navigation.navigate('Payslip')}>

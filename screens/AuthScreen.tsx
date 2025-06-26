@@ -2,14 +2,16 @@
 import React, { useState } from "react";
 import {
   View,
-  Text,
   TextInput,
-  Button,
   StyleSheet,
   ActivityIndicator,
   TouchableOpacity,
 } from "react-native";
 import { useAuth } from "../context/AuthContext";
+import { useThemeContext } from "../context/ThemeContext";
+import { lightColors, darkColors } from "../constants/colors";
+import ThemedText from "../components/ThemedText";
+import Button from "../components/Button";
 
 function getErrorMessage(error: unknown): string {
   if (error && typeof error === "object" && "message" in error) {
@@ -20,6 +22,8 @@ function getErrorMessage(error: unknown): string {
 
 export default function AuthScreen() {
   const { login, signup, loading } = useAuth();
+  const { theme } = useThemeContext();
+  const colors = theme === "dark" ? darkColors : lightColors;
 
   const [isSignup, setIsSignup] = useState(false);
   const [email, setEmail] = useState("");
@@ -62,28 +66,28 @@ export default function AuthScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}> 
       {/* Toggle Login/Signup */}
       <View style={styles.toggleContainer}>
         <TouchableOpacity
           style={[
             styles.toggleButton,
-            !isSignup && styles.activeToggleButton,
+            !isSignup && { borderBottomColor: colors.accent },
           ]}
           onPress={() => setIsSignup(false)}
         >
-          <Text style={!isSignup ? styles.activeToggleText : styles.toggleText}>
+          <ThemedText style={!isSignup ? styles.activeToggleText : styles.toggleText}>
             Login
-          </Text>
+          </ThemedText>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.toggleButton, isSignup && styles.activeToggleButton]}
+          style={[styles.toggleButton, isSignup && { borderBottomColor: colors.accent }]}
           onPress={() => setIsSignup(true)}
         >
-          <Text style={isSignup ? styles.activeToggleText : styles.toggleText}>
+          <ThemedText style={isSignup ? styles.activeToggleText : styles.toggleText}>
             Sign Up
-          </Text>
+          </ThemedText>
         </TouchableOpacity>
       </View>
 
@@ -94,7 +98,8 @@ export default function AuthScreen() {
         onChangeText={setEmail}
         autoCapitalize="none"
         keyboardType="email-address"
-        style={styles.input}
+        style={[styles.input, { borderColor: colors.border, color: colors.textPrimary }]}
+        placeholderTextColor={colors.textSecondary}
       />
 
       {/* Password */}
@@ -103,59 +108,45 @@ export default function AuthScreen() {
         value={password}
         onChangeText={setPassword}
         secureTextEntry
-        style={styles.input}
+        style={[styles.input, { borderColor: colors.border, color: colors.textPrimary }]}
+        placeholderTextColor={colors.textSecondary}
       />
 
       {/* Role selection only on signup */}
       {isSignup && (
         <View style={styles.roleContainer}>
-          <Text style={styles.roleLabel}>Select Role:</Text>
+          <ThemedText style={styles.roleLabel}>Select Role:</ThemedText>
           <View style={styles.roles}>
             <TouchableOpacity
-              style={[
-                styles.roleButton,
-                role === "employee" && styles.roleButtonActive,
-              ]}
+              style={[styles.roleButton, role === "employee" && { backgroundColor: colors.accent }]}
               onPress={() => setRole("employee")}
             >
-              <Text
-                style={[
-                  styles.roleButtonText,
-                  role === "employee" && styles.roleButtonTextActive,
-                ]}
-              >
+              <ThemedText style={role === "employee" ? styles.roleButtonTextActive : styles.roleButtonText}>
                 Employee
-              </Text>
+              </ThemedText>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[
-                styles.roleButton,
-                role === "hr" && styles.roleButtonActive,
-              ]}
+              style={[styles.roleButton, role === "hr" && { backgroundColor: colors.accent }]}
               onPress={() => setRole("hr")}
             >
-              <Text
-                style={[
-                  styles.roleButtonText,
-                  role === "hr" && styles.roleButtonTextActive,
-                ]}
-              >
+              <ThemedText style={role === "hr" ? styles.roleButtonTextActive : styles.roleButtonText}>
                 HR
-              </Text>
+              </ThemedText>
             </TouchableOpacity>
           </View>
         </View>
       )}
 
       {/* Error message */}
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error && <ThemedText style={styles.errorText}>{error}</ThemedText>}
 
       {/* Submit Button */}
       <Button
         title={isSignup ? "Sign Up" : "Login"}
         onPress={isSignup ? handleSignup : handleLogin}
         disabled={loading || !email.trim() || !password.trim()}
+        style={{ marginTop: 16 }}
       />
     </View>
   );
@@ -166,7 +157,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 24,
     justifyContent: "center",
-    backgroundColor: "#fff",
   },
   toggleContainer: {
     flexDirection: "row",
@@ -179,23 +169,17 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: "transparent",
   },
-  activeToggleButton: {
-    borderBottomColor: "#6200ee",
-  },
   toggleText: {
     fontSize: 18,
-    color: "#888",
   },
   activeToggleText: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#6200ee",
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
     padding: 12,
-    borderRadius: 4,
+    borderRadius: 6,
     marginBottom: 12,
     fontSize: 16,
   },
@@ -216,19 +200,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: "#ccc",
-  },
-  roleButtonActive: {
-    backgroundColor: "#6200ee",
-    borderColor: "#6200ee",
   },
   roleButtonText: {
     fontSize: 16,
-    color: "#444",
+    textAlign: "center",
   },
   roleButtonTextActive: {
-    color: "white",
+    fontSize: 16,
     fontWeight: "bold",
+    color: "#fff",
+    textAlign: "center",
   },
   errorText: {
     color: "red",
