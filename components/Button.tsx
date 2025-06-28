@@ -9,15 +9,16 @@ type ButtonProps = {
   title: string;
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
+  backgroundColor?: string;
 };
 
-export default function Button({ onPress, title, disabled = false, style }: ButtonProps) {
+export default function Button({ onPress, title, disabled = false, style,  backgroundColor }: ButtonProps) {
   const { theme } = useThemeContext();
   const colors = theme === 'dark' ? darkColors : lightColors;
 
   return (
     <TouchableOpacity
-      style={[styles.button, { backgroundColor: colors.accent }, style]}
+      style={[styles.button, { backgroundColor: backgroundColor ?? colors.accent }, style]}
       onPress={onPress}
       disabled={disabled}
     >
