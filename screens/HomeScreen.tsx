@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, Button } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootTabParamList } from '../types/navigation';
@@ -13,13 +13,56 @@ import typography from '../constants/typography';
 import Card from '../components/Card';
 import ThemedText from '../components/ThemedText';
 
+import { collection, query, where, orderBy, limit, getDocs, DocumentData, Query } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
+
 export default function HomeScreen() {
   const { user, role, logout } = useAuth();
-
   const { toggleTheme, theme } = useThemeContext();
   const colors = useThemeColors();
-
   const navigation = useNavigation<NativeStackNavigationProp<RootTabParamList>>();
+
+  const [recentPayslip, setRecentPayslip] = useState<any | null>(null);
+  const [loadingPayslip, setLoadingPayslip] = useState(false);
+
+  // Fetch cel mai recent payslip
+const fetchRecentPayslip = async () => {
+  if (!user) return;
+
+  setLoadingPayslip(true);
+  try {
+    const payslipRef = collection(db, 'payslips');
+    let q: Query<unknown, DocumentData>;
+
+    if (role === 'hr') {
+      q = query(payslipRef, orderBy('orderIndex', 'desc'), limit(1));
+    } else {
+      q = query(payslipRef, where('userId', '==', user.uid), orderBy('orderIndex', 'desc'), limit(1));
+    }
+
+    const snapshot = await getDocs(q);
+
+    if (!snapshot.empty) {
+      const doc = snapshot.docs[0];
+      setRecentPayslip({ id: doc.id, ...(doc.data() as object) });
+    } else {
+      setRecentPayslip(null);
+    }
+  } catch (error) {
+    console.error('Fetch payslip error:', error);
+    Alert.alert('Error loading payslip');
+    setRecentPayslip(null);
+  }
+  setLoadingPayslip(false);
+};
+
+
+  useEffect(() => {
+    fetchRecentPayslip();
+  }, [user, role]);
+
+  // Titlu dinamic pentru payslip card
+  const payslipCardTitle = role === 'hr' ? 'Most Recent Payslip in System' : 'Your Most Recent Payslip';
 
   return (
     <ScrollView
@@ -39,7 +82,6 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Buton logout */}
       <CustomButton
         title="Logout"
         onPress={async () => {
@@ -49,16 +91,26 @@ export default function HomeScreen() {
             Alert.alert('Error', 'Logout failed');
           }
         }}
-        style={{ marginBottom: 20 }} // spațiere sub header
+        style={{ marginBottom: 20 }}
       />
 
-      <TouchableOpacity onPress={() => navigation.navigate('Payslip')}>
-        <Card title="Your Payslips" iconName="file-document-outline" buttonText="Download PDF" onButtonPress={() => {
-          Alert.alert("Download Started", "We're preparing your payslip PDF");
-        }}>
-          <ThemedText>Aprilie 2025</ThemedText>
-        </Card>
-      </TouchableOpacity>
+      {/* Recent Payslip */}
+      {loadingPayslip ? (
+        <ThemedText>Loading recent payslip...</ThemedText>
+      ) : recentPayslip ? (
+        <TouchableOpacity onPress={() => navigation.navigate('Payslip')}>
+          <Card title={payslipCardTitle} iconName="file-document-outline" buttonText="View Details" onButtonPress={() => navigation.navigate('Payslip')}>
+            <ThemedText>Month: {recentPayslip.month}</ThemedText>
+            <ThemedText>Year: {recentPayslip.year}</ThemedText>
+            <ThemedText>File: {recentPayslip.file}</ThemedText>
+            {role === 'hr' && <ThemedText>Employee ID: {recentPayslip.userId}</ThemedText>}
+          </Card>
+        </TouchableOpacity>
+      ) : (
+        <ThemedText style={{ marginBottom: 20 }}>
+          {role === 'hr' ? 'No payslips found in the system.' : 'You have no payslips yet.'}
+        </ThemedText>
+      )}
 
       <TouchableOpacity onPress={() => navigation.navigate('Requests')}>
         <Card title="Cereri recente" iconName="calendar-clock">
@@ -87,7 +139,6 @@ export default function HomeScreen() {
           <Text style={[styles.hrBotText, { color: colors.card }]}>🤖 Deschide HR Bot</Text>
         </TouchableOpacity>
       )}
-
     </ScrollView>
   );
 }
@@ -99,7 +150,6 @@ const styles = StyleSheet.create({
   themeToggle: {
     padding: 6,
     borderRadius: 20,
-    backgroundColor: '#eee',
   },
   headerContainer: {
     flexDirection: 'row',
@@ -127,6 +177,6 @@ const styles = StyleSheet.create({
   hrBotText: {
     textAlign: 'center',
     fontSize: typography.fontSize.base,
-    fontWeight: 'semibold',
+    fontWeight: '600',
   },
 });
