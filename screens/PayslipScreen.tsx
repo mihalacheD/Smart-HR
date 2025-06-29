@@ -204,7 +204,7 @@ export default function PayslipScreen() {
                 {role === 'hr' && (
                   <Button
                     title="Delete"
-                    backgroundColor="#D9534F"
+                    backgroundColor={colors.danger}
                     onPress={() =>
                       Alert.alert(
                         'Confirm Delete',

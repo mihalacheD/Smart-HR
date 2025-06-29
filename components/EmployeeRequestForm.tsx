@@ -19,8 +19,9 @@ import ThemedText from './ThemedText';
 import { useAuth } from '../context/AuthContext';
 import { lightColors, darkColors } from '../constants/colors';
 import { useThemeContext } from '../context/ThemeContext';
+import { formatDateLabel } from '../utils/formatDate';
 
-const requestTypes = ['Holiday', 'Work from home', 'Other'];
+const requestTypes = ['Holiday', 'Work from home', 'Medical'];
 
 export default function EmployeeRequestForm() {
   const { user } = useAuth();
@@ -91,16 +92,17 @@ export default function EmployeeRequestForm() {
             <ThemedText style={styles.label}>Select Dates</ThemedText>
             <View style={styles.dateRow}>
               <Button
-                title={fromDate ? `From: ${fromDate.toDateString()}` : 'From'}
+                title={fromDate ? `From: ${formatDateLabel(fromDate)}` : 'From'}
                 onPress={() => setPickerVisible('from')}
                 style={styles.dateButton}
               />
+
               <View style={{ width: 10 }} />
+
               <Button
-                title={toDate ? `To: ${toDate.toDateString()}` : 'To'}
+                title={toDate ? `To: ${formatDateLabel(toDate)}` : 'To'}
                 onPress={() => setPickerVisible('to')}
                 style={styles.dateButton}
-
               />
             </View>
           </View>
