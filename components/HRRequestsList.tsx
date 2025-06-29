@@ -10,6 +10,7 @@ import ThemedText from './ThemedText';
 import Button from './Button';
 import { formatDateLabel } from '../utils/formatDate';
 import RequestBadge from './RequestBadge';
+import LoadingOrEmpty from './LoadingOrEmpty';
 
 
 
@@ -27,12 +28,14 @@ interface Request {
 
 export default function HRRequestsList() {
   const [requests, setRequests] = useState<Request[]>([]);
+  const [loading, setLoading] = useState(true);
   const { theme } = useThemeContext();
   const colors = theme === 'dark' ? darkColors : lightColors;
 
 
   const fetchRequests = async () => {
     try {
+      setLoading(true);
       const snapshot = await getDocs(collection(db, 'requests'));
       const reqs: Request[] = [];
 
@@ -55,8 +58,11 @@ export default function HRRequestsList() {
       setRequests(reqs);
     } catch (err) {
       Alert.alert('Error loading requests');
+    } finally {
+      setLoading(false);
     }
   };
+
 
   const updateStatus = async (id: string, status: 'approved' | 'rejected') => {
     try {
@@ -130,6 +136,7 @@ export default function HRRequestsList() {
           )}
         </Card>
       )}
+      ListEmptyComponent={<LoadingOrEmpty loading={loading} emptyMessage="No requests found." />}
     />
   );
 }

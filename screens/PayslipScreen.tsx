@@ -21,8 +21,10 @@ import YearPickerModal from '../components/YearPickerModal';
 import { useAuth } from '../context/AuthContext';
 import { collection, addDoc, query, where, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
+import LoadingOrEmpty from '../components/LoadingOrEmpty';
 
 export default function PayslipScreen() {
+  const [loading, setLoading] = useState(true);
   const { role, user } = useAuth();
   const { theme } = useThemeContext();
   const colors = theme === 'dark' ? darkColors : lightColors;
@@ -37,6 +39,8 @@ export default function PayslipScreen() {
   const fetchPayslips = useCallback(async () => {
     if (!user) return;
 
+    setLoading(true);
+
     try {
       const payslipRef = collection(db, 'payslips');
       const q = role === 'hr'
@@ -48,8 +52,11 @@ export default function PayslipScreen() {
       setFilteredPayslips(items);
     } catch {
       Alert.alert('Error fetching payslips');
+    } finally {
+      setLoading(false); // 👉 oprește spinner-ul
     }
   }, [user, role, selectedYear]);
+
 
   // Fetch employees only if HR
   const fetchEmployees = useCallback(async () => {
@@ -185,7 +192,7 @@ export default function PayslipScreen() {
 
       {filteredPayslips.length === 0 ? (
         <View style={styles.emptyState}>
-          <ThemedText style={styles.emptyText}>No payslips available for {selectedYear}.</ThemedText>
+          <LoadingOrEmpty loading={loading} emptyMessage={`No payslips available for ${selectedYear}.`} />
         </View>
       ) : (
         <FlatList
