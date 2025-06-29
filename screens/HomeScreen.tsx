@@ -15,6 +15,7 @@ import ThemedText from '../components/ThemedText';
 
 import { collection, query, where, orderBy, limit, getDocs, DocumentData, Query } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
+import Spinner from '../components/Spinner';
 
 export default function HomeScreen() {
   const { user, role, logout } = useAuth();
@@ -96,7 +97,7 @@ const fetchRecentPayslip = async () => {
 
       {/* Recent Payslip */}
       {loadingPayslip ? (
-        <ThemedText>Loading recent payslip...</ThemedText>
+         <Spinner />
       ) : recentPayslip ? (
         <TouchableOpacity onPress={() => navigation.navigate('Payslip')}>
           <Card title={payslipCardTitle} iconName="file-document-outline" buttonText="View Details" onButtonPress={() => navigation.navigate('Payslip')}>

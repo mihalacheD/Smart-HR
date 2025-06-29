@@ -34,8 +34,8 @@ export default function HRRequestsList() {
 
 
   const fetchRequests = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       const snapshot = await getDocs(collection(db, 'requests'));
       const reqs: Request[] = [];
 
@@ -82,6 +82,22 @@ export default function HRRequestsList() {
     if (input instanceof Timestamp) return input.toDate();
     return new Date(input);
   };
+
+    if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <LoadingOrEmpty loading={loading} />
+      </View>
+    );
+  }
+
+  if (requests.length === 0) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <LoadingOrEmpty loading={false} emptyMessage="No requests found." />
+      </View>
+    );
+  }
 
 
   return (
@@ -136,7 +152,6 @@ export default function HRRequestsList() {
           )}
         </Card>
       )}
-      ListEmptyComponent={<LoadingOrEmpty loading={loading} emptyMessage="No requests found." />}
     />
   );
 }

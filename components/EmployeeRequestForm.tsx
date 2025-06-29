@@ -20,6 +20,7 @@ import { useAuth } from '../context/AuthContext';
 import { lightColors, darkColors } from '../constants/colors';
 import { useThemeContext } from '../context/ThemeContext';
 import { formatDateLabel } from '../utils/formatDate';
+import LoadingOrEmpty from './LoadingOrEmpty';
 
 const requestTypes = ['Holiday', 'Work from home', 'Medical'];
 
@@ -31,6 +32,7 @@ export default function EmployeeRequestForm() {
   const [type, setType] = useState('');
   const [message, setMessage] = useState('');
   const [fromDate, setFromDate] = useState<Date | null>(null);
+  const [loading, setLoading] = useState(false);
   const [toDate, setToDate] = useState<Date | null>(null);
   const [pickerVisible, setPickerVisible] = useState<'from' | 'to' | null>(null);
 
@@ -39,7 +41,7 @@ export default function EmployeeRequestForm() {
       Alert.alert('Please complete all required fields.');
       return;
     }
-
+    setLoading(true);
     try {
       await addDoc(collection(db, 'requests'), {
         userId: user?.uid,
@@ -60,8 +62,18 @@ export default function EmployeeRequestForm() {
     } catch (error) {
       Alert.alert('Failed to send request');
       console.error('Submit error:', error);
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <View style={styles.center}>
+        <LoadingOrEmpty loading={loading} />
+      </View>
+    );
+  }
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -142,6 +154,11 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     flex: 1,
+  },
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   section: {
     marginBottom: 20,
