@@ -7,9 +7,14 @@ import LoadingOrEmpty from './LoadingOrEmpty';
 import RequestCard from './RequestCard';
 import ThemedContainer from './ThemedContainer';
 import TitleHeader from './TitleHeader';
+import { useDeleteRequest } from '../hooks/useDeleteRequest';
+import SwipeToDelete from './SwipeToDelete';
+import { useAuth } from '../context/AuthContext';
 
 export default function HRRequestsList() {
+  const { role } = useAuth();
   const { requests, loading, refetch } = useHRRequests();
+  const { deleteRequest } = useDeleteRequest(refetch);
 
   const updateStatus = async (id: string, status: 'approved' | 'rejected') => {
     try {
@@ -36,17 +41,29 @@ export default function HRRequestsList() {
       <FlatList
         data={requests}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <RequestCard
-            item={item}
-            onApprove={(id) => updateStatus(id, 'approved')}
-            onReject={(id) => updateStatus(id, 'rejected')}
-          />
-        )}
         ListHeaderComponent={<TitleHeader title="Requests" />}
         refreshing={loading}
         onRefresh={refetch}
         contentContainerStyle={{ padding: 20 }}
+        renderItem={({ item }) => {
+          const allowDelete =
+            (role === 'hr' && ['approved', 'rejected'].includes(item.status)) ||
+            (role === 'employee')
+
+          const card = (
+            <RequestCard
+              item={item}
+              onApprove={(id) => updateStatus(id, 'approved')}
+              onReject={(id) => updateStatus(id, 'rejected')}
+            />
+          );
+
+          return allowDelete ? (
+            <SwipeToDelete onDelete={() => deleteRequest(item.id)}>{card}</SwipeToDelete>
+          ) : (
+            card
+          );
+        }}
       />
     </ThemedContainer>
   );

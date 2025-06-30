@@ -15,10 +15,13 @@ import EmployeeRequestFormFields from './EmployeeRequestFormFields';
 import TitleHeader from './TitleHeader';
 import { useThemeContext } from '../context/ThemeContext';
 import { lightColors, darkColors } from '../constants/colors';
+import SwipeToDelete from './SwipeToDelete';
+import { useDeleteRequest } from '../hooks/useDeleteRequest';
 
 export default function EmployeeRequestForm() {
-  const { user } = useAuth();
+  const { user, role } = useAuth();
   const { requests, refetch, loading } = useEmployeeRequests(user?.uid ?? null);
+  const { deleteRequest } = useDeleteRequest(refetch);
   const { theme } = useThemeContext();
   const colors = theme === 'dark' ? darkColors : lightColors;
 
@@ -39,7 +42,23 @@ export default function EmployeeRequestForm() {
             />
           </>
         }
-        renderItem={({ item }) => <RequestCard item={item} />}
+        renderItem={({ item }) => {
+          const allowDelete =
+            (role === 'hr' && ['approved', 'rejected'].includes(item.status)) ||
+            (role === 'employee')
+
+          const card = (
+            <RequestCard
+              item={item}
+            />
+          );
+
+          return allowDelete ? (
+            <SwipeToDelete onDelete={() => deleteRequest(item.id)}>{card}</SwipeToDelete>
+          ) : (
+            card
+          );
+        }}
         ListEmptyComponent={
           <LoadingOrEmpty
             loading={loading}
