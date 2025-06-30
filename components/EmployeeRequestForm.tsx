@@ -8,7 +8,8 @@ import {
   Text,
   TouchableWithoutFeedback,
   Keyboard,
-  ScrollView
+  ScrollView,
+  FlatList
 } from 'react-native';
 import { db } from '../firebaseConfig';
 import { collection, addDoc, Timestamp } from 'firebase/firestore';
@@ -17,10 +18,12 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import Button from './Button';
 import ThemedText from './ThemedText';
 import { useAuth } from '../context/AuthContext';
+import { useEmployeeRequests } from '../hooks/useEmployeeRequests';
 import { lightColors, darkColors } from '../constants/colors';
 import { useThemeContext } from '../context/ThemeContext';
 import { formatDateLabel } from '../utils/formatDate';
 import LoadingOrEmpty from './LoadingOrEmpty';
+import RequestCard from './RequestCard';
 
 const requestTypes = ['Holiday', 'Work from home', 'Medical'];
 
@@ -35,6 +38,7 @@ export default function EmployeeRequestForm() {
   const [loading, setLoading] = useState(false);
   const [toDate, setToDate] = useState<Date | null>(null);
   const [pickerVisible, setPickerVisible] = useState<'from' | 'to' | null>(null);
+  const { requests, refetch } = useEmployeeRequests(user?.uid ?? null);
 
   const handleSubmit = async () => {
     if (!type || !fromDate || !toDate) {
@@ -59,6 +63,9 @@ export default function EmployeeRequestForm() {
       setMessage('');
       setFromDate(null);
       setToDate(null);
+
+      refetch();
+
     } catch (error) {
       Alert.alert('Failed to send request');
       console.error('Submit error:', error);
@@ -145,6 +152,18 @@ export default function EmployeeRequestForm() {
             onCancel={() => setPickerVisible(null)}
           />
         </View>
+
+        <FlatList
+          data={requests}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContainer}
+          renderItem={({ item }) => (
+            <RequestCard item={item} />
+          )}
+          // optional, pentru pull-to-refresh:
+          refreshing={loading}
+          onRefresh={refetch}
+        />
       </ScrollView>
     </TouchableWithoutFeedback>
   );
@@ -152,8 +171,11 @@ export default function EmployeeRequestForm() {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
     flex: 1,
+    padding: 20,
+  },
+  listContainer: {
+    padding: 20,
   },
   center: {
     flex: 1,

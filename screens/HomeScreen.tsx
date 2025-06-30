@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import CustomButton from '../components/Button';
 import { useThemeContext } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
+import { useRecentRequest } from '../hooks/useRequests';
 import { useThemeColors } from '../hooks/useThemeColor';
 import typography from '../constants/typography';
 import Card from '../components/Card';
@@ -16,6 +17,7 @@ import ThemedText from '../components/ThemedText';
 import { collection, query, where, orderBy, limit, getDocs, DocumentData, Query } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import Spinner from '../components/Spinner';
+import RequestCard from '../components/RequestCard';
 
 export default function HomeScreen() {
   const { user, role, logout } = useAuth();
@@ -24,38 +26,39 @@ export default function HomeScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootTabParamList>>();
 
   const [recentPayslip, setRecentPayslip] = useState<any | null>(null);
+  const { recentRequest, loadingRequest, refetch } = useRecentRequest(user?.uid || null, role);
   const [loadingPayslip, setLoadingPayslip] = useState(false);
 
   // Fetch cel mai recent payslip
-const fetchRecentPayslip = async () => {
-  if (!user) return;
+  const fetchRecentPayslip = async () => {
+    if (!user) return;
 
-  setLoadingPayslip(true);
-  try {
-    const payslipRef = collection(db, 'payslips');
-    let q: Query<unknown, DocumentData>;
+    setLoadingPayslip(true);
+    try {
+      const payslipRef = collection(db, 'payslips');
+      let q: Query<unknown, DocumentData>;
 
-    if (role === 'hr') {
-      q = query(payslipRef, orderBy('orderIndex', 'desc'), limit(1));
-    } else {
-      q = query(payslipRef, where('userId', '==', user.uid), orderBy('orderIndex', 'desc'), limit(1));
-    }
+      if (role === 'hr') {
+        q = query(payslipRef, orderBy('orderIndex', 'desc'), limit(1));
+      } else {
+        q = query(payslipRef, where('userId', '==', user.uid), orderBy('orderIndex', 'desc'), limit(1));
+      }
 
-    const snapshot = await getDocs(q);
+      const snapshot = await getDocs(q);
 
-    if (!snapshot.empty) {
-      const doc = snapshot.docs[0];
-      setRecentPayslip({ id: doc.id, ...(doc.data() as object) });
-    } else {
+      if (!snapshot.empty) {
+        const doc = snapshot.docs[0];
+        setRecentPayslip({ id: doc.id, ...(doc.data() as object) });
+      } else {
+        setRecentPayslip(null);
+      }
+    } catch (error) {
+      console.error('Fetch payslip error:', error);
+      Alert.alert('Error loading payslip');
       setRecentPayslip(null);
     }
-  } catch (error) {
-    console.error('Fetch payslip error:', error);
-    Alert.alert('Error loading payslip');
-    setRecentPayslip(null);
-  }
-  setLoadingPayslip(false);
-};
+    setLoadingPayslip(false);
+  };
 
 
   useEffect(() => {
@@ -97,7 +100,7 @@ const fetchRecentPayslip = async () => {
 
       {/* Recent Payslip */}
       {loadingPayslip ? (
-         <Spinner />
+        <Spinner />
       ) : recentPayslip ? (
         <TouchableOpacity onPress={() => navigation.navigate('Payslip')}>
           <Card title={payslipCardTitle} iconName="file-document-outline" buttonText="View Details" onButtonPress={() => navigation.navigate('Payslip')}>
@@ -113,12 +116,25 @@ const fetchRecentPayslip = async () => {
         </ThemedText>
       )}
 
+      {/* Recent Request*/}
       <TouchableOpacity onPress={() => navigation.navigate('Requests')}>
-        <Card title="Cereri recente" iconName="calendar-clock">
-          <ThemedText>Concediu: 3-5 Iunie</ThemedText>
-          <ThemedText>Work from home: 10 Iunie</ThemedText>
-        </Card>
+        {loadingRequest ? (
+          <Card title="Recent Request" iconName="calendar-clock">
+            <ThemedText>Loading...</ThemedText>
+          </Card>
+        ) : recentRequest ? (
+          <RequestCard
+            item={recentRequest}
+            title="Recent Request"
+            subtitle={recentRequest.userEmail || 'Unknown user'}
+          />
+        ) : (
+          <Card title="Recent Request" iconName="calendar-clock">
+            <ThemedText>No recent requests.</ThemedText>
+          </Card>
+        )}
       </TouchableOpacity>
+
 
       <TouchableOpacity onPress={() => navigation.navigate('Chat')}>
         <Card title="Mesaj intern" iconName="chat-outline">
