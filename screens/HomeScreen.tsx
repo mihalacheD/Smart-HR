@@ -1,91 +1,48 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, RefreshControl } from 'react-native';
+import React, { useState } from 'react';
+import { RefreshControl, TouchableOpacity, View, StyleSheet, Alert, Text } from 'react-native';
+
+import { useAuth } from '../context/AuthContext';
+import { useThemeContext } from '../context/ThemeContext';
+import { useThemeColors } from '../hooks/useThemeColor';
+import { useRecentRequest } from '../hooks/useRequests';
+import { useRecentPayslip } from '../hooks/useRecentPayslip';
+
+import PageContainer from '../components/PageContainer';
+import Card from '../components/Card';
+import ThemedText from '../components/ThemedText';
+import RequestCard from '../components/RequestCard';
+import HomePayslipCard from '../components/HomePayslipCard';
+
+import typography from '../constants/typography';
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootTabParamList } from '../types/navigation';
-import { Ionicons } from '@expo/vector-icons';
-
-import CustomButton from '../components/Button';
-import { useThemeContext } from '../context/ThemeContext';
-import { useAuth } from '../context/AuthContext';
-import { useRecentRequest } from '../hooks/useRequests';
-import { useThemeColors } from '../hooks/useThemeColor';
-import typography from '../constants/typography';
-import Card from '../components/Card';
-import ThemedText from '../components/ThemedText';
-
-import { collection, query, where, orderBy, limit, getDocs, DocumentData, Query } from 'firebase/firestore';
-import { db } from '../firebaseConfig';
-import Spinner from '../components/Spinner';
-import RequestCard from '../components/RequestCard';
+import LogoutButton from '../components/LogoutButton';
 
 export default function HomeScreen() {
-  const { user, role, logout } = useAuth();
+  const { user, role } = useAuth();
   const { toggleTheme, theme } = useThemeContext();
   const colors = useThemeColors();
   const navigation = useNavigation<NativeStackNavigationProp<RootTabParamList>>();
 
-  const [recentPayslip, setRecentPayslip] = useState<any | null>(null);
-  const { recentRequest, loadingRequest, refetch } = useRecentRequest(user?.uid || null, role);
-  const [loadingPayslip, setLoadingPayslip] = useState(false);
+  const { recentRequest, loadingRequest, refetch: refetchRequest } = useRecentRequest(user?.uid || null, role);
+  const { recentPayslip, loadingPayslip, refetch: refetchPayslip } = useRecentPayslip(user?.uid || null, role);
+
   const [refreshing, setRefreshing] = useState(false);
-
-
-  // Fetch cel mai recent payslip
-  const fetchRecentPayslip = async () => {
-    if (!user) return;
-
-    setLoadingPayslip(true);
-    try {
-      const payslipRef = collection(db, 'payslips');
-      let q: Query<unknown, DocumentData>;
-
-      if (role === 'hr') {
-        q = query(payslipRef, orderBy('orderIndex', 'desc'), limit(1));
-      } else {
-        q = query(payslipRef, where('userId', '==', user.uid), orderBy('orderIndex', 'desc'), limit(1));
-      }
-
-      const snapshot = await getDocs(q);
-
-      if (!snapshot.empty) {
-        const doc = snapshot.docs[0];
-        setRecentPayslip({ id: doc.id, ...(doc.data() as object) });
-      } else {
-        setRecentPayslip(null);
-      }
-    } catch (error) {
-      console.error('Fetch payslip error:', error);
-      Alert.alert('Error loading payslip');
-      setRecentPayslip(null);
-    }
-    setLoadingPayslip(false);
-  };
-
-
-  useEffect(() => {
-    fetchRecentPayslip();
-  }, [user, role]);
-
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await fetchRecentPayslip();
-    await refetch();
+    await Promise.all([refetchPayslip(), refetchRequest()]);
     setRefreshing(false);
   };
 
-
-  // Titlu dinamic pentru payslip card
-  const payslipCardTitle = role === 'hr' ? 'Most Recent Payslip in System' : 'Your Most Recent Payslip';
-
   return (
-    <ScrollView
-      contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}
-      style={{ backgroundColor: colors.background }}
+    <PageContainer
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
       }
+      style={{ backgroundColor: colors.background }}
     >
       <View style={styles.headerContainer}>
         <View style={styles.headerLeft}>
@@ -100,37 +57,10 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
 
-      <CustomButton
-        title="Logout"
-        onPress={async () => {
-          try {
-            await logout();
-          } catch (error) {
-            Alert.alert('Error', 'Logout failed');
-          }
-        }}
-        style={{ marginBottom: 20 }}
-      />
+      <LogoutButton style={{ marginBottom: 20 }} />
 
-      {/* Recent Payslip */}
-      {loadingPayslip ? (
-        <Spinner />
-      ) : recentPayslip ? (
-        <TouchableOpacity onPress={() => navigation.navigate('Payslip')}>
-          <Card title={payslipCardTitle} iconName="file-document-outline" buttonText="View Details" onButtonPress={() => navigation.navigate('Payslip')}>
-            <ThemedText>Month: {recentPayslip.month}</ThemedText>
-            <ThemedText>Year: {recentPayslip.year}</ThemedText>
-            <ThemedText>File: {recentPayslip.file}</ThemedText>
-            {role === 'hr' && <ThemedText>Employee ID: {recentPayslip.userId}</ThemedText>}
-          </Card>
-        </TouchableOpacity>
-      ) : (
-        <ThemedText style={{ marginBottom: 20 }}>
-          {role === 'hr' ? 'No payslips found in the system.' : 'You have no payslips yet.'}
-        </ThemedText>
-      )}
+      <HomePayslipCard recentPayslip={recentPayslip} loadingPayslip={loadingPayslip} role={role} />
 
-      {/* Recent Request*/}
       <TouchableOpacity onPress={() => navigation.navigate('Requests')}>
         {loadingRequest ? (
           <Card title="Recent Request" iconName="calendar-clock">
@@ -148,7 +78,6 @@ export default function HomeScreen() {
           </Card>
         )}
       </TouchableOpacity>
-
 
       <TouchableOpacity onPress={() => navigation.navigate('Chat')}>
         <Card title="Mesaj intern" iconName="chat-outline">
@@ -170,18 +99,12 @@ export default function HomeScreen() {
           <Text style={[styles.hrBotText, { color: colors.card }]}>🤖 Deschide HR Bot</Text>
         </TouchableOpacity>
       )}
-    </ScrollView>
+
+    </PageContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-  },
-  themeToggle: {
-    padding: 6,
-    borderRadius: 20,
-  },
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -199,6 +122,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginLeft: 10,
     flexShrink: 1,
+  },
+  themeToggle: {
+    padding: 6,
+    borderRadius: 20,
   },
   hrBot: {
     marginTop: 30,
