@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, FlatList, Alert } from 'react-native';
+import { FlatList, Alert } from 'react-native';
 import { doc, updateDoc } from 'firebase/firestore';
 import { useHRRequests } from '../hooks/useHRRequests';
 import { db } from '../firebaseConfig';
@@ -8,10 +8,8 @@ import RequestCard from './RequestCard';
 import ThemedContainer from './ThemedContainer';
 import TitleHeader from './TitleHeader';
 
-
 export default function HRRequestsList() {
   const { requests, loading, refetch } = useHRRequests();
-
 
   const updateStatus = async (id: string, status: 'approved' | 'rejected') => {
     try {
@@ -22,32 +20,22 @@ export default function HRRequestsList() {
     }
   };
 
-  if (loading) {
+  if (loading || requests.length === 0) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <LoadingOrEmpty loading={loading} />
-      </View>
+      <ThemedContainer>
+        <LoadingOrEmpty
+          loading={loading}
+          emptyMessage="No requests found."
+        />
+      </ThemedContainer>
     );
   }
-
-  if (requests.length === 0) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <LoadingOrEmpty loading={false} emptyMessage="No requests found." />
-      </View>
-    );
-  }
-
 
   return (
-    <ThemedContainer >
-      <View style={{ paddingTop: 10, paddingHorizontal: 20 }}>
-        <TitleHeader title="Requests" />
-      </View>
+    <ThemedContainer>
       <FlatList
         data={requests}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={{ padding: 20 }}
         renderItem={({ item }) => (
           <RequestCard
             item={item}
@@ -55,11 +43,11 @@ export default function HRRequestsList() {
             onReject={(id) => updateStatus(id, 'rejected')}
           />
         )}
+        ListHeaderComponent={<TitleHeader title="Requests" />}
         refreshing={loading}
         onRefresh={refetch}
+        contentContainerStyle={{ padding: 20 }}
       />
     </ThemedContainer>
   );
 }
-
-

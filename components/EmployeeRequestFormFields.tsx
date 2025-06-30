@@ -64,7 +64,6 @@ export default function EmployeeRequestFormFields({ userId, userEmail, onSuccess
 
   return (
     <View style={styles.container}>
-      <ThemedText style={styles.title}>Requests</ThemedText>
       <View style={styles.section}>
         <ThemedText style={styles.label}>Type</ThemedText>
         <View style={styles.optionsContainer}>
