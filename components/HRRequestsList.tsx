@@ -1,18 +1,16 @@
 import React from 'react';
-import { View, FlatList, StyleSheet, Alert } from 'react-native';
+import { View, FlatList, Alert } from 'react-native';
 import { doc, updateDoc } from 'firebase/firestore';
-import { lightColors, darkColors } from '../constants/colors';
-import { useThemeContext } from '../context/ThemeContext';
 import { useHRRequests } from '../hooks/useHRRequests';
 import { db } from '../firebaseConfig';
 import LoadingOrEmpty from './LoadingOrEmpty';
 import RequestCard from './RequestCard';
+import ThemedContainer from './ThemedContainer';
+import TitleHeader from './TitleHeader';
 
 
 export default function HRRequestsList() {
   const { requests, loading, refetch } = useHRRequests();
-  const { theme } = useThemeContext();
-  const colors = theme === 'dark' ? darkColors : lightColors;
 
 
   const updateStatus = async (id: string, status: 'approved' | 'rejected') => {
@@ -42,31 +40,26 @@ export default function HRRequestsList() {
 
 
   return (
-    <FlatList
-      style={[styles.container, { backgroundColor: colors.background }]}
-      data={requests}
-      keyExtractor={(item) => item.id}
-      contentContainerStyle={{ padding: 20 }}
-      renderItem={({ item }) => (
-        <RequestCard
-          item={item}
-          onApprove={(id) => updateStatus(id, 'approved')}
-          onReject={(id) => updateStatus(id, 'rejected')}
-        />
-      )}
-      refreshing={loading}
-      onRefresh={refetch}
-    />
+    <ThemedContainer >
+      <View style={{ paddingTop: 10, paddingHorizontal: 20 }}>
+        <TitleHeader title="Requests" />
+      </View>
+      <FlatList
+        data={requests}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={{ padding: 20 }}
+        renderItem={({ item }) => (
+          <RequestCard
+            item={item}
+            onApprove={(id) => updateStatus(id, 'approved')}
+            onReject={(id) => updateStatus(id, 'rejected')}
+          />
+        )}
+        refreshing={loading}
+        onRefresh={refetch}
+      />
+    </ThemedContainer>
   );
 }
 
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    marginTop: 10,
-  },
-});
