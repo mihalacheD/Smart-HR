@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Modal, FlatList, StyleSheet } from 'react-native';
 import { useThemeColors } from '../hooks/useThemeColor';
+import ThemedText from './ThemedText';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -22,7 +23,7 @@ export default function MonthPicker({ selectedMonth, onSelect }: Props) {
         onPress={() => setVisible(true)}
         style={[styles.dropdown, { borderColor: colors.border }]}
       >
-        <Text>{selectedMonth || 'Select month'}</Text>
+        <ThemedText>{selectedMonth || 'Select month'}</ThemedText>
       </TouchableOpacity>
 
       <Modal visible={visible} transparent animationType="fade">
