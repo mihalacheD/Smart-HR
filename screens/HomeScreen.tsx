@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, RefreshControl } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootTabParamList } from '../types/navigation';
@@ -28,6 +28,8 @@ export default function HomeScreen() {
   const [recentPayslip, setRecentPayslip] = useState<any | null>(null);
   const { recentRequest, loadingRequest, refetch } = useRecentRequest(user?.uid || null, role);
   const [loadingPayslip, setLoadingPayslip] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
 
   // Fetch cel mai recent payslip
   const fetchRecentPayslip = async () => {
@@ -65,6 +67,15 @@ export default function HomeScreen() {
     fetchRecentPayslip();
   }, [user, role]);
 
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchRecentPayslip();
+    await refetch();
+    setRefreshing(false);
+  };
+
+
   // Titlu dinamic pentru payslip card
   const payslipCardTitle = role === 'hr' ? 'Most Recent Payslip in System' : 'Your Most Recent Payslip';
 
@@ -72,6 +83,9 @@ export default function HomeScreen() {
     <ScrollView
       contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}
       style={{ backgroundColor: colors.background }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
+      }
     >
       <View style={styles.headerContainer}>
         <View style={styles.headerLeft}>
