@@ -27,7 +27,6 @@ export function useEmployees() {
   const [loading, setLoading] = useState(true);
 
   const fetchEmployees = useCallback(async () => {
-    if (role !== "hr") return;
 
     try {
       const usersRef = collection(db, "users");

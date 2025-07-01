@@ -9,6 +9,7 @@ import Button from './Button';
 import { lightColors, darkColors } from '../constants/colors';
 import { useThemeContext } from '../context/ThemeContext';
 import { useEmployees } from '../hooks/useEmployees';
+import { getDisplayName } from '../utils/getDisplayName';
 
 interface Request {
   id: string;
@@ -42,14 +43,11 @@ export default function RequestCard({ item, onApprove, onReject, title, subtitle
   const { theme } = useThemeContext();
   const colors = theme === 'dark' ? darkColors : lightColors;
 
-    // Găsește angajatul după userId
-  const employee = employees.find(emp => emp.id === item.userId);
-  const displaySubtitle = employee ? employee.fullName ?? employee.email : subtitle;
-
+  const employeeName = getDisplayName(item.userId, employees, { email: item.userEmail });
 
   return (
-    <Card title={(title ?? `From: ${displaySubtitle}`)  || 'Request'} iconName="calendar-clock">
-      {subtitle && <ThemedText style={{ fontSize: 14, marginBottom: 6, color: colors.textSecondary }}>From: {displaySubtitle}</ThemedText>}
+    <Card title={(title ?? employeeName) || 'Request'} iconName="calendar-clock">
+      {subtitle && <ThemedText style={{ fontSize: 14, marginBottom: 6, color: colors.textSecondary }}>From: {employeeName}</ThemedText>}
 
       <RequestBadge type={item.type} />
 

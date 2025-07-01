@@ -8,6 +8,7 @@ import { lightColors, darkColors } from '../constants/colors';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import { useEmployees } from '../hooks/useEmployees';
+import { getDisplayName } from '../utils/getDisplayName';
 
 interface Props {
   item: any;
@@ -20,7 +21,7 @@ export default function PayslipCard({ item, role, onDeleted }: Props) {
   const { theme } = useThemeContext();
   const colors = theme === 'dark' ? darkColors : lightColors;
 
-  const employee = employees.find(emp => emp.id === item.userId);
+  const employeeName = getDisplayName(item.userId, employees, { email: item.userEmail });
 
   const handleDeletePayslip = async () => {
     try {
@@ -35,7 +36,7 @@ export default function PayslipCard({ item, role, onDeleted }: Props) {
   return (
     <Card title={item.month} iconName="file-pdf-box">
       <ThemedText>File: {item.file}</ThemedText>
-      <ThemedText>Employee: {employee ? employee.fullName ?? employee.email : item.userId}</ThemedText>
+      <ThemedText>Employee: {employeeName}</ThemedText>
       <View style={styles.buttonRow}>
         <Button
           title="Download"

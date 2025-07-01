@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootTabParamList } from '../types/navigation';
 import { useEmployees } from '../hooks/useEmployees';
+import { getDisplayName } from '../utils/getDisplayName';
 
 interface Props {
   recentPayslip: any;
@@ -36,7 +37,7 @@ export default function HomePayslipCard({ recentPayslip, loadingPayslip, role }:
     );
   }
 
-  const employee = employees.find(emp => emp.id === recentPayslip.userId);
+  const employeeName = getDisplayName(recentPayslip?.userId, employees, { email: recentPayslip?.userEmail });
 
   return (
     <TouchableOpacity onPress={() => navigation.navigate('Payslip')}>
@@ -48,7 +49,7 @@ export default function HomePayslipCard({ recentPayslip, loadingPayslip, role }:
       >
         {
         role === 'hr' && <ThemedText>
-          Employee: {employee ? employee.fullName ?? employee.email : recentPayslip.userId}</ThemedText>
+          Employee: {employeeName}</ThemedText>
         }
         <ThemedText>Month: {recentPayslip.month}</ThemedText>
         <ThemedText>Year: {recentPayslip.year}</ThemedText>

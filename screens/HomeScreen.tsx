@@ -19,9 +19,12 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootTabParamList } from '../types/navigation';
 import LogoutButton from '../components/LogoutButton';
+import { getDisplayName } from '../utils/getDisplayName';
+import { useEmployees } from '../hooks/useEmployees';
 
 export default function HomeScreen() {
   const { user, role } = useAuth();
+  const { employees } = useEmployees();
   const { toggleTheme, theme } = useThemeContext();
   const colors = useThemeColors();
   const navigation = useNavigation<NativeStackNavigationProp<RootTabParamList>>();
@@ -37,6 +40,9 @@ export default function HomeScreen() {
     setRefreshing(false);
   };
 
+  const displayName = getDisplayName(user?.uid, employees, user);
+  const welcomeText = role === 'hr' ? 'Welcome, HR' : `Welcome, ${displayName}!`;
+
   return (
     <PageContainer
       refreshControl={
@@ -48,7 +54,7 @@ export default function HomeScreen() {
         <View style={styles.headerLeft}>
           <Ionicons name="briefcase" size={28} color="#166AF9" />
           <ThemedText style={styles.headerText} numberOfLines={1} ellipsizeMode="tail">
-            Bun venit, {user?.email ?? 'Utilizator'}!
+              {welcomeText}
           </ThemedText>
         </View>
 
