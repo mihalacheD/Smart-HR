@@ -8,6 +8,7 @@ import { formatDateLabel } from '../utils/formatDate';
 import Button from './Button';
 import { lightColors, darkColors } from '../constants/colors';
 import { useThemeContext } from '../context/ThemeContext';
+import { useEmployees } from '../hooks/useEmployees';
 
 interface Request {
   id: string;
@@ -36,13 +37,19 @@ const toDate = (input: any): Date => {
   return new Date(input);
 };
 
-export default function RequestCard({ item, onApprove, onReject, title, subtitle}: Props) {
+export default function RequestCard({ item, onApprove, onReject, title, subtitle }: Props) {
+  const { employees } = useEmployees();
   const { theme } = useThemeContext();
   const colors = theme === 'dark' ? darkColors : lightColors;
 
+    // Găsește angajatul după userId
+  const employee = employees.find(emp => emp.id === item.userId);
+  const displaySubtitle = employee ? employee.fullName ?? employee.email : subtitle;
+
+
   return (
-    <Card title={(title ?? item.userEmail) || 'Request'} iconName="calendar-clock">
-      {subtitle && <ThemedText style={{ fontSize: 14, marginBottom: 6, color: colors.textSecondary }}>{subtitle}</ThemedText>}
+    <Card title={(title ?? `From: ${displaySubtitle}`)  || 'Request'} iconName="calendar-clock">
+      {subtitle && <ThemedText style={{ fontSize: 14, marginBottom: 6, color: colors.textSecondary }}>From: {displaySubtitle}</ThemedText>}
 
       <RequestBadge type={item.type} />
 
@@ -69,7 +76,7 @@ export default function RequestCard({ item, onApprove, onReject, title, subtitle
 
       <ThemedText>Message: {item.message}</ThemedText>
 
-       {item.status === 'pending' && onApprove && onReject && (
+      {item.status === 'pending' && onApprove && onReject && (
         <View style={styles.buttonRow}>
           <Button
             title="Approve"

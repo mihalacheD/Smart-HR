@@ -6,6 +6,7 @@ import ThemedText from './ThemedText';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootTabParamList } from '../types/navigation';
+import { useEmployees } from '../hooks/useEmployees';
 
 interface Props {
   recentPayslip: any;
@@ -15,6 +16,7 @@ interface Props {
 
 export default function HomePayslipCard({ recentPayslip, loadingPayslip, role }: Props) {
   const navigation = useNavigation<NativeStackNavigationProp<RootTabParamList>>();
+  const { employees } = useEmployees();
 
   const payslipCardTitle = role === 'hr' ? 'Most Recent Payslip in System' : 'Your Most Recent Payslip';
 
@@ -34,6 +36,7 @@ export default function HomePayslipCard({ recentPayslip, loadingPayslip, role }:
     );
   }
 
+  const employee = employees.find(emp => emp.id === recentPayslip.userId);
 
   return (
     <TouchableOpacity onPress={() => navigation.navigate('Payslip')}>
@@ -43,10 +46,13 @@ export default function HomePayslipCard({ recentPayslip, loadingPayslip, role }:
         buttonText="View Details"
         onButtonPress={() => navigation.navigate('Payslip')}
       >
+        {
+        role === 'hr' && <ThemedText>
+          Employee: {employee ? employee.fullName ?? employee.email : recentPayslip.userId}</ThemedText>
+        }
         <ThemedText>Month: {recentPayslip.month}</ThemedText>
         <ThemedText>Year: {recentPayslip.year}</ThemedText>
         <ThemedText>File: {recentPayslip.file}</ThemedText>
-        {role === 'hr' && <ThemedText>Employee ID: {recentPayslip.userId}</ThemedText>}
       </Card>
     </TouchableOpacity>
   );

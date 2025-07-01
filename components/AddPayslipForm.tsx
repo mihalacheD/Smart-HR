@@ -81,12 +81,12 @@ export default function AddPayslipForm({ selectedYear, onAdded }: Props) {
           <View style={[styles.modalContainer, { backgroundColor: colors.card }]}>
             <FlatList
               data={employees}
-              keyExtractor={item => item.uid}
+              keyExtractor={item => item.id}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   style={styles.item}
                   onPress={() => {
-                    setNewPayslip(prev => ({ ...prev, userId: item.uid }));
+                    setNewPayslip(prev => ({ ...prev, userId: item.id }));
                     setShowEmployeeModal(false);
                   }}
                 >
