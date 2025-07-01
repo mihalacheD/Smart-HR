@@ -1,87 +1,47 @@
-import React, { useEffect, useState } from 'react';
-import { View, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../firebaseConfig';
+import React from 'react';
+import { FlatList } from 'react-native';
+import AddEmployeeForm from '../components/AddEmployeeForm';
+import ThemedContainer from '../components/ThemedContainer';
+import TitleHeader from '../components/TitleHeader';
+import { useEmployees } from '../hooks/useEmployees';
+import LoadingOrEmpty from '../components/LoadingOrEmpty';
+import EmployeeCard from '../components/EmployeeCard';
 
-import Card from '../components/Card';
-import ThemedText from '../components/ThemedText';
-import { useThemeContext } from '../context/ThemeContext';
-import { lightColors, darkColors } from '../constants/colors';
 
-type Employee = {
-  id: string;
-  email: string;
-  role: string;
-};
 
 export default function EmployeesScreen() {
-  const { theme } = useThemeContext();
-  const colors = theme === 'dark' ? darkColors : lightColors;
 
-  const [employees, setEmployees] = useState<Employee[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchEmployees = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, 'users'));
-        const list: Employee[] = [];
-
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          if (data.role === 'employee') {
-            list.push({
-              id: doc.id,
-              email: data.email,
-              role: data.role,
-            });
-          }
-        });
-
-        setEmployees(list);
-      } catch (error) {
-        console.error('Error fetching employees:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEmployees();
-  }, []);
+  const { employees, fetchEmployees, deleteEmployee, loading } = useEmployees();
 
   if (loading) {
-    return (
-      <View style={[styles.center, { backgroundColor: colors.background }]}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
+    return <LoadingOrEmpty loading={loading} />
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <ThemedContainer>
       <FlatList
         data={employees}
         keyExtractor={(item) => item.id}
+        contentContainerStyle={{ padding: 20 }}
+        ListHeaderComponent={
+          <>
+            <TitleHeader title="Employees" />
+            <AddEmployeeForm onAdded={fetchEmployees} />
+          </>
+        }
         renderItem={({ item }) => (
-          <Card title={item.email} iconName="account">
-            <ThemedText>ID: {item.id}</ThemedText>
-            <ThemedText>Role: {item.role}</ThemedText>
-          </Card>
+          <EmployeeCard
+            id={item.id}
+            email={item.email}
+            role={item.role}
+            fullName={item.fullName}
+            position={item.position}
+            onDelete={deleteEmployee}
+          />
         )}
-        contentContainerStyle={{ paddingBottom: 30 }}
+        keyboardShouldPersistTaps="handled"
       />
-    </View>
+    </ThemedContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    flex: 1,
-  },
-  center: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
