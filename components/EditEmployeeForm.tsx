@@ -9,7 +9,8 @@ import {
 import { Employee } from '../hooks/useEmployees';
 import ThemedText from './ThemedText';
 import Button from './Button';
-import { lightColors } from '../constants/colors';
+import { lightColors, darkColors } from '../constants/colors';
+import { useThemeContext } from '../context/ThemeContext';
 
 interface Props {
   employee: Employee;
@@ -24,6 +25,10 @@ export default function EditEmployeeForm({
   onClose,
   updateEmployee,
 }: Props) {
+
+  const { theme } = useThemeContext();
+  const colors = theme === 'dark' ? darkColors : lightColors;
+
   const [fullName, setFullName] = useState(employee.fullName ?? '');
   const [email, setEmail] = useState(employee.email ?? '');
   const [position, setPosition] = useState(employee.position ?? '');
@@ -63,17 +68,17 @@ export default function EditEmployeeForm({
       onRequestClose={onClose}
     >
 
-      <View style={styles.modalBackground}>
+      <View style={[styles.modalBackground, { backgroundColor: colors.background }]} >
         <ThemedText style={styles.title}>Edit Employee info</ThemedText>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { color: colors.textPrimary }]}
           placeholder="Full Name"
           value={fullName}
           onChangeText={setFullName}
           editable={!loading}
         />
         <TextInput
-          style={styles.input}
+          style={[styles.input, { color: colors.textPrimary }]}
           placeholder="Email (optional)"
           value={email}
           onChangeText={setEmail}
@@ -82,7 +87,7 @@ export default function EditEmployeeForm({
           autoCapitalize="none"
         />
         <TextInput
-          style={styles.input}
+          style={[styles.input, { color: colors.textPrimary }]}
           placeholder="Position"
           value={position}
           onChangeText={setPosition}
@@ -94,9 +99,9 @@ export default function EditEmployeeForm({
             title={loading ? 'Saving...' : 'Save'}
             onPress={handleSave}
             disabled={loading}
-            style={{ flex: 1 , backgroundColor: lightColors.success}}
+            style={{ flex: 1, backgroundColor: colors.success }}
           />
-          <Button title="Cancel" onPress={onClose} disabled={loading} style={{ flex: 1, marginLeft: 10, backgroundColor: lightColors.textSecondary}} />
+          <Button title="Cancel" onPress={onClose} disabled={loading} style={{ flex: 1, marginLeft: 10, backgroundColor: colors.textSecondary }} />
         </View>
 
       </View>
@@ -111,7 +116,6 @@ const styles = StyleSheet.create({
   },
   modalBackground: {
     flex: 1,
-    backgroundColor: 'white',
     justifyContent: 'center',
     padding: 20,
   },
