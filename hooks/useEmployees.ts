@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
-import { collection, query, where, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { collection, query, where, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import { useAuth } from '../context/AuthContext';
 import { Alert } from 'react-native';
 
-type Employee = {
+ export type Employee = {
   id: string;
   uid: string;
   email: string;
@@ -56,10 +56,23 @@ export function useEmployees() {
     }
   };
 
+    const updateEmployee = useCallback(
+    async (id: string, updatedData: Partial<Employee>) => {
+      try {
+        await updateDoc(doc(db, 'users', id), updatedData);
+        await fetchEmployees();
+      } catch (error) {
+        Alert.alert('Failed to update employee');
+        console.error(error);
+      }
+    },
+    [fetchEmployees]
+  );
+
   useEffect(() => {
     fetchEmployees();
   }, [fetchEmployees]);
 
-  return { employees, loading, fetchEmployees, deleteEmployee };
+  return { employees, loading, fetchEmployees, deleteEmployee, updateEmployee  };
 }
 

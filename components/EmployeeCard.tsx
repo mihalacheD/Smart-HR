@@ -13,6 +13,7 @@ interface Props {
   fullName?: string;
   position?: string;
   onDelete?: (id: string) => void;
+  onUpdate?: (id: string) => void;
 }
 
 export default function EmployeeCard({
@@ -22,6 +23,7 @@ export default function EmployeeCard({
   fullName,
   position,
   onDelete,
+  onUpdate
 }: Props) {
   const { theme } = useThemeContext();
   const colors = theme === 'dark' ? darkColors : lightColors;
@@ -33,6 +35,7 @@ export default function EmployeeCard({
     ]);
   };
 
+
   return (
     <Card title={fullName ?? email} iconName="account">
       <ThemedText>Email: {email}</ThemedText>
@@ -40,21 +43,34 @@ export default function EmployeeCard({
       <ThemedText>Role: {role}</ThemedText>
       {position && <ThemedText>Position: {position}</ThemedText>}
 
-      {onDelete && (
-        <View style={styles.buttonWrapper}>
+      <View style={styles.buttonRow}>
+        {onUpdate && (
+          <Button
+            title="Update"
+            backgroundColor={colors.accent}
+            onPress={() => onUpdate(id)}
+            style={{ flex: 1 }}
+          />
+        )
+        }
+
+        {onDelete && (
           <Button
             title="Delete"
             backgroundColor={colors.danger}
             onPress={handleDelete}
+            style={{ flex: 1, marginLeft: 10 }}
           />
-        </View>
-      )}
-    </Card>
+        )}
+
+      </View>
+    </Card >
   );
 }
 
 const styles = StyleSheet.create({
-  buttonWrapper: {
+  buttonRow: {
+    flexDirection: 'row',
     marginTop: 10,
   },
 });
