@@ -30,7 +30,7 @@ export function useEmployees() {
 
     try {
       const usersRef = collection(db, "users");
-      const q = query(usersRef, where("role", "==", "employee"));
+      const q = query(usersRef, where('role', 'in', ['employee', 'hr']));
       const snapshot = await getDocs(q);
       const items = snapshot.docs.map((doc) => {
         const data = doc.data();

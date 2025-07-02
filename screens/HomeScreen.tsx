@@ -21,10 +21,13 @@ import { RootTabParamList } from '../types/navigation';
 import LogoutButton from '../components/LogoutButton';
 import { getDisplayName } from '../utils/getDisplayName';
 import { useEmployees } from '../hooks/useEmployees';
+import { useLastMessage } from '../hooks/useLastMessage';
+import HomeMessageCard from '../components/HomeMessageCard';
 
 export default function HomeScreen() {
   const { user, role } = useAuth();
   const { employees } = useEmployees();
+  const { lastMessage } = useLastMessage();
   const { toggleTheme, theme } = useThemeContext();
   const colors = useThemeColors();
   const navigation = useNavigation<NativeStackNavigationProp<RootTabParamList>>();
@@ -54,7 +57,7 @@ export default function HomeScreen() {
         <View style={styles.headerLeft}>
           <Ionicons name="briefcase" size={28} color="#166AF9" />
           <ThemedText style={styles.headerText} numberOfLines={1} ellipsizeMode="tail">
-              {welcomeText}
+            {welcomeText}
           </ThemedText>
         </View>
 
@@ -85,17 +88,14 @@ export default function HomeScreen() {
         )}
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => navigation.navigate('Chat')}>
-        <Card title="Mesaj intern" iconName="chat-outline">
-          <ThemedText>“Ședință la ora 10.” — Andrei</ThemedText>
+      {lastMessage ? (
+        <HomeMessageCard message={lastMessage} />
+      ) : (
+        <Card title="Last Message" iconName="chat-outline">
+          <ThemedText>No messages yet.</ThemedText>
         </Card>
-      </TouchableOpacity>
+      )}
 
-      <TouchableOpacity onPress={() => navigation.navigate('Chat')}>
-        <Card title="Anunț intern" iconName="bell-outline">
-          <ThemedText>Platforma intră în mentenanță pe 20 Iunie.</ThemedText>
-        </Card>
-      </TouchableOpacity>
 
       {role === 'employee' && (
         <TouchableOpacity

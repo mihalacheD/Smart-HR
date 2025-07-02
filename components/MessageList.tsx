@@ -25,7 +25,7 @@ export default function MessageList({ messages, currentUserId }: Props) {
       renderItem={({ item }) => {
         const isOwnMessage = item.senderId === currentUserId;
         const sender = employees.find((emp) => emp.uid === item.senderId);
-        const senderName = sender?.fullName || sender?.email || 'HR';
+        const senderName = sender?.fullName || sender?.email || 'Unknown sender';
 
         return (
           <MessageBubble
