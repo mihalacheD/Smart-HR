@@ -9,11 +9,14 @@ interface Message {
   text: string;
   senderId: string;
   timestamp: Date;
+  important?: boolean;
 }
 
 interface Props {
   messages: Message[];
   currentUserId: string;
+  toggleImportant?: (messageId: string, isImportant: boolean) => void;
+  role?: string;
 }
 
 type MessageItem = {
@@ -23,7 +26,12 @@ type MessageItem = {
   message?: Message;
 };
 
-export default function MessageList({ messages, currentUserId }: Props) {
+export default function MessageList({
+  messages,
+  currentUserId,
+  toggleImportant,
+  role,
+}: Props) {
   const { employees } = useEmployees();
 
   // Procesăm lista de mesaje și adăugăm separat "separatori"
@@ -59,6 +67,10 @@ export default function MessageList({ messages, currentUserId }: Props) {
             isOwnMessage={isOwnMessage}
             timestamp={message.timestamp}
             senderName={isOwnMessage ? undefined : senderName}
+            important={message.important}
+            messageId={message.id}
+            toggleImportant={toggleImportant}
+            role={role}
           />
         );
       }}

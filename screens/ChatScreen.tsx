@@ -9,7 +9,8 @@ import MessageList from '../components/MessageList';
 import MessageInput from '../components/MessageInput';
 import ThemedText from '../components/ThemedText';
 import ThemedContainer from '../components/ThemedContainer';
-
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
 
 function parseTimestamp(timestamp: any): Date | null {
   if (timestamp?.toDate) return timestamp.toDate();
@@ -24,11 +25,10 @@ function parseTimestamp(timestamp: any): Date | null {
 }
 
 export default function ChatScreen() {
-  const { user } = useAuth();
+  const { user, role } = useAuth();
   const colors = useThemeColors();
 
   const { messages, sendMessage, loading } = useMessages(user?.uid ?? '');
-
 
   useEffect(() => {
     if (user?.uid && messages.length) {
@@ -39,6 +39,15 @@ export default function ChatScreen() {
     }
   }, [messages, user]);
 
+  // Functia pentru toggle important - doar HR poate folosi
+  async function toggleImportant(messageId: string, isImportant: boolean) {
+    if (role !== 'hr') return; // doar HR poate schimba
+
+    const messageRef = doc(db, 'messages', messageId);
+    await updateDoc(messageRef, {
+      important: !isImportant,
+    });
+  }
 
   return (
     <ThemedContainer style={{ backgroundColor: colors.background, padding: 5 }}>
@@ -57,8 +66,9 @@ export default function ChatScreen() {
                 timestamp: parseTimestamp(m.timestamp),
               }))}
               currentUserId={user?.uid ?? ''}
+              toggleImportant={toggleImportant}
+              role={role}
             />
-
           )}
         </View>
 

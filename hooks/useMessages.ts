@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { collection, addDoc, query, orderBy, onSnapshot, Timestamp } from 'firebase/firestore';
+import { collection, addDoc, query, orderBy, onSnapshot, Timestamp, updateDoc, doc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 
 export type Message = {
@@ -8,6 +8,7 @@ export type Message = {
   senderId: string;
   text: string;
   timestamp: Timestamp;
+   important?: boolean;
 };
 
 export function useMessages(p0: string) {
@@ -40,5 +41,12 @@ export function useMessages(p0: string) {
     });
   }, []);
 
-  return { messages, loading, sendMessage };
+    const toggleImportant = async (messageId: string, isImportant: boolean) => {
+    await updateDoc(doc(db, 'messages', messageId), {
+      important: !isImportant,
+    });
+  };
+
+
+  return { messages, loading, sendMessage, toggleImportant };
 }
