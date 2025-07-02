@@ -12,36 +12,40 @@ import RequestsScreen from '../screens/RequestScreen';
 import HRBotScreen from '../screens/HRBotScreen';
 import { useAuth } from '../context/AuthContext';
 import EmployeesScreen from '../screens/EmployeesScreen';
+import { useUnreadMessagesCount } from '../hooks/useUnreadMessagesCount';
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
 export default function MainTabs() {
 
-  const { user, role, logout } = useAuth();
+  const { role, user } = useAuth();
   const colors = useThemeColors();
+  const unreadCount = useUnreadMessagesCount(user?.uid ?? null);
 
   return (
     <Tab.Navigator
       id={undefined}
       initialRouteName="Home"
-      screenOptions={{
-        tabBarActiveTintColor: colors.accent,
-        tabBarInactiveTintColor: colors.textSecondary,
-        tabBarLabelStyle: {
-          fontSize: typography.fontSize.sm,
-          fontWeight: '500',
-        },
-        tabBarStyle: {
-          backgroundColor: colors.card,
-          borderTopColor: colors.border,
-          borderTopWidth: 0.5,
-          height: 65,
-          paddingBottom: 8,
-          paddingTop: 6,
-          elevation: 4,
-        },
-        headerShown: false,
-      }}
+      screenOptions={({ route }) => (
+        {
+          tabBarBadge: route.name === 'Chat' && unreadCount > 0 ? unreadCount : undefined,
+          tabBarActiveTintColor: colors.accent,
+          tabBarInactiveTintColor: colors.textSecondary,
+          tabBarLabelStyle: {
+            fontSize: typography.fontSize.sm,
+            fontWeight: '500',
+          },
+          tabBarStyle: {
+            backgroundColor: colors.card,
+            borderTopColor: colors.border,
+            borderTopWidth: 0.5,
+            height: 65,
+            paddingBottom: 8,
+            paddingTop: 6,
+            elevation: 4,
+          },
+          headerShown: false,
+        })}
     >
       <Tab.Screen
         name="Home"

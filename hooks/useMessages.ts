@@ -3,6 +3,7 @@ import { collection, addDoc, query, orderBy, onSnapshot, Timestamp } from 'fireb
 import { db } from '../firebaseConfig';
 
 export type Message = {
+  readBy: any;
   id: string;
   senderId: string;
   text: string;
@@ -35,6 +36,7 @@ export function useMessages(p0: string) {
       senderId,
       text,
       timestamp: Timestamp.now(),
+      readBy: [senderId],
     });
   }, []);
 

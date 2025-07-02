@@ -1,19 +1,44 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import { useMessages } from '../hooks/useMessages';
 import { useThemeColors } from '../hooks/useThemeColor';
+import { markMessagesAsRead } from '../utils/markMessagesAsRead';
 
 import MessageList from '../components/MessageList';
 import MessageInput from '../components/MessageInput';
 import ThemedText from '../components/ThemedText';
 import ThemedContainer from '../components/ThemedContainer';
 
+
+function parseTimestamp(timestamp: any): Date | null {
+  if (timestamp?.toDate) return timestamp.toDate();
+  if (
+    typeof timestamp === 'string' ||
+    typeof timestamp === 'number' ||
+    timestamp instanceof Date
+  ) {
+    return new Date(timestamp);
+  }
+  return null;
+}
+
 export default function ChatScreen() {
   const { user } = useAuth();
   const colors = useThemeColors();
 
   const { messages, sendMessage, loading } = useMessages(user?.uid ?? '');
+
+
+  useEffect(() => {
+    if (user?.uid && messages.length) {
+      const hasUnread = messages.some(msg => !msg.readBy?.includes(user.uid));
+      if (hasUnread) {
+        markMessagesAsRead(messages, user.uid);
+      }
+    }
+  }, [messages, user]);
+
 
   return (
     <ThemedContainer style={{ backgroundColor: colors.background, padding: 5 }}>
@@ -29,11 +54,7 @@ export default function ChatScreen() {
             <MessageList
               messages={messages.map(m => ({
                 ...m,
-                timestamp: m.timestamp?.toDate
-                  ? m.timestamp.toDate()
-                  : typeof m.timestamp === 'string' || typeof m.timestamp === 'number' || m.timestamp instanceof Date
-                  ? new Date(m.timestamp)
-                  : null,
+                timestamp: parseTimestamp(m.timestamp),
               }))}
               currentUserId={user?.uid ?? ''}
             />
