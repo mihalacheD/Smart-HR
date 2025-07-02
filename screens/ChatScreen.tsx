@@ -16,29 +16,34 @@ export default function ChatScreen() {
   const { messages, sendMessage, loading } = useMessages(user?.uid ?? '');
 
   return (
-      <ThemedContainer style={{ backgroundColor: colors.background, padding: 5 }}>
-        <KeyboardAvoidingView
-          style={styles.flex}
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          keyboardVerticalOffset={80}
-        >
-          <View style={styles.flex}>
-            {loading ? (
-              <ThemedText style={{ padding: 16 }}>Loading messages...</ThemedText>
-            ) : (
-              <MessageList
-                messages={messages.map(m => ({
-                  ...m,
-                  timestamp: m.timestamp?.toString?.() ?? ''
-                }))}
-                currentUserId={user?.uid ?? ''}
-              />
-            )}
-          </View>
+    <ThemedContainer style={{ backgroundColor: colors.background, padding: 5 }}>
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={80}
+      >
+        <View style={styles.flex}>
+          {loading ? (
+            <ThemedText style={{ padding: 16 }}>Loading messages...</ThemedText>
+          ) : (
+            <MessageList
+              messages={messages.map(m => ({
+                ...m,
+                timestamp: m.timestamp?.toDate
+                  ? m.timestamp.toDate()
+                  : typeof m.timestamp === 'string' || typeof m.timestamp === 'number' || m.timestamp instanceof Date
+                  ? new Date(m.timestamp)
+                  : null,
+              }))}
+              currentUserId={user?.uid ?? ''}
+            />
 
-          <MessageInput onSend={(text: string) => sendMessage(user?.uid ?? '', text)} />
-        </KeyboardAvoidingView>
-      </ThemedContainer>
+          )}
+        </View>
+
+        <MessageInput onSend={(text: string) => sendMessage(user?.uid ?? '', text)} />
+      </KeyboardAvoidingView>
+    </ThemedContainer>
   );
 }
 

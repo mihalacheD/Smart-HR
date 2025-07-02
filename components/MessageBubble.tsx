@@ -38,7 +38,7 @@ export default function MessageBubble({ text, senderName, timestamp, isOwnMessag
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 12,
+    marginBottom: 20,
     paddingHorizontal: 10,
   },
   ownContainer: {
