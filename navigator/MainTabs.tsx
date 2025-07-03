@@ -9,10 +9,10 @@ import HomeScreen from '../screens/HomeScreen';
 import ChatScreen from '../screens/ChatScreen';
 import PayslipScreen from '../screens/PayslipScreen';
 import RequestsScreen from '../screens/RequestScreen';
-import HRBotScreen from '../screens/HRBotScreen';
 import { useAuth } from '../context/AuthContext';
 import EmployeesScreen from '../screens/EmployeesScreen';
 import { useUnreadMessagesCount } from '../hooks/useUnreadMessagesCount';
+import CalendarScreen from '../screens/CalendarScreen';
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
@@ -85,11 +85,11 @@ export default function MainTabs() {
       />
       {role === 'employee' && (
         <Tab.Screen
-          name="HRBot"
-          component={HRBotScreen}
+          name="Calendar"
+          component={CalendarScreen}
           options={{
             tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons name="robot-happy" size={size} color={color} />
+              <MaterialCommunityIcons name="calendar-month" size={size} color={color} />
             ),
           }}
         />

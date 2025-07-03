@@ -100,7 +100,7 @@ export default function HomeScreen() {
       {role === 'employee' && (
         <TouchableOpacity
           style={[styles.hrBot, { backgroundColor: colors.secondary }]}
-          onPress={() => navigation.navigate('HRBot')}
+          onPress={() => navigation.navigate('Calendar')}
         >
           <Text style={[styles.hrBotText, { color: colors.card }]}>🤖 Deschide HR Bot</Text>
         </TouchableOpacity>

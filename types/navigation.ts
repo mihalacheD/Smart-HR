@@ -3,6 +3,6 @@ export type RootTabParamList = {
   Chat: undefined;
   Payslip: undefined;
   Requests: undefined;
-  HRBot: undefined;
+  Calendar: undefined;
   Employees: undefined;
 };
