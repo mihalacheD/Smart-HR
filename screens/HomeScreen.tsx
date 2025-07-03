@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { RefreshControl, TouchableOpacity, View, StyleSheet, Alert, Text } from 'react-native';
+import { RefreshControl, TouchableOpacity, View, StyleSheet } from 'react-native';
 
 import { useAuth } from '../context/AuthContext';
 import { useThemeContext } from '../context/ThemeContext';
@@ -15,9 +15,6 @@ import HomePayslipCard from '../components/HomePayslipCard';
 
 import typography from '../constants/typography';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootTabParamList } from '../types/navigation';
 import LogoutButton from '../components/LogoutButton';
 import { getDisplayName } from '../utils/getDisplayName';
 import { useEmployees } from '../hooks/useEmployees';
@@ -33,7 +30,6 @@ export default function HomeScreen() {
   const { toggleTheme, theme } = useThemeContext();
   const { notes } = useCalendarNotes(user?.uid ?? '');
   const colors = useThemeColors();
-  const navigation = useNavigation<NativeStackNavigationProp<RootTabParamList>>();
 
   const { recentRequest, loadingRequest, refetch: refetchRequest } = useRecentRequest(user?.uid || null, role);
   const { recentPayslip, loadingPayslip, refetch: refetchPayslip } = useRecentPayslip(user?.uid || null, role);
@@ -76,23 +72,22 @@ export default function HomeScreen() {
 
       <HomePayslipCard recentPayslip={recentPayslip} loadingPayslip={loadingPayslip} role={role} />
 
-      <TouchableOpacity onPress={() => navigation.navigate('Requests')}>
-        {loadingRequest ? (
-          <Card title="Recent Request" iconName="calendar-clock">
-            <ThemedText>Loading...</ThemedText>
-          </Card>
-        ) : recentRequest ? (
-          <RequestCard
-            item={recentRequest}
-            title="Recent Request"
-            subtitle={recentRequest.userEmail || 'Unknown user'}
-          />
-        ) : (
-          <Card title="Recent Request" iconName="calendar-clock">
-            <ThemedText>No recent requests.</ThemedText>
-          </Card>
-        )}
-      </TouchableOpacity>
+      {loadingRequest ? (
+        <Card title="Recent Request" iconName="calendar-clock">
+          <ThemedText>Loading...</ThemedText>
+        </Card>
+      ) : recentRequest ? (
+        <RequestCard
+          item={recentRequest}
+          title="Recent Request"
+          subtitle={recentRequest.userEmail || 'Unknown user'}
+        />
+      ) : (
+        <Card title="Recent Request" iconName="calendar-clock">
+          <ThemedText>No recent requests.</ThemedText>
+        </Card>
+      )}
+
 
       {lastMessage ? (
         <HomeMessageCard message={lastMessage} />
@@ -104,7 +99,7 @@ export default function HomeScreen() {
 
 
       {role === 'employee' && (
-          <HomeCalendarCard notesForToday={notesForToday} date={today} />
+        <HomeCalendarCard notesForToday={notesForToday} date={today} />
       )}
 
     </PageContainer>

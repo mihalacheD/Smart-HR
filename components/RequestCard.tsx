@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Timestamp } from 'firebase/firestore';
 import ThemedText from './ThemedText';
 import Card from './Card';
@@ -10,6 +10,9 @@ import { lightColors, darkColors } from '../constants/colors';
 import { useThemeContext } from '../context/ThemeContext';
 import { useEmployees } from '../hooks/useEmployees';
 import { getDisplayName } from '../utils/getDisplayName';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootTabParamList } from '../types/navigation';
 
 interface Request {
   id: string;
@@ -42,56 +45,59 @@ export default function RequestCard({ item, onApprove, onReject, title, subtitle
   const { employees } = useEmployees();
   const { theme } = useThemeContext();
   const colors = theme === 'dark' ? darkColors : lightColors;
+  const navigation = useNavigation<NativeStackNavigationProp<RootTabParamList>>();
 
   const employeeName = getDisplayName(item.userId, employees, { email: item.userEmail });
 
   return (
-    <Card title={(title ?? employeeName) || 'Request'} iconName="calendar-clock">
-      {subtitle && <ThemedText style={{ fontSize: 14, marginBottom: 6, color: colors.textSecondary }}>From: {employeeName}</ThemedText>}
+    <TouchableOpacity onPress={() => navigation.navigate('Requests')}>
+      <Card title={(title ?? employeeName) || 'Request'} iconName="calendar-clock">
+        {subtitle && <ThemedText style={{ fontSize: 14, marginBottom: 6, color: colors.textSecondary }}>From: {employeeName}</ThemedText>}
 
-      <RequestBadge type={item.type} />
+        <RequestBadge type={item.type} />
 
-      <ThemedText>
-        Date: {formatDateLabel(toDate(item.fromDate))} → {formatDateLabel(toDate(item.toDate))}
-      </ThemedText>
-
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <ThemedText>Status: </ThemedText>
-        <ThemedText
-          style={{
-            color:
-              item.status === 'approved'
-                ? colors.success
-                : item.status === 'rejected'
-                  ? colors.danger
-                  : colors.textSecondary,
-            fontWeight: 'bold',
-          }}
-        >
-          {item.status}
+        <ThemedText>
+          Date: {formatDateLabel(toDate(item.fromDate))} → {formatDateLabel(toDate(item.toDate))}
         </ThemedText>
-      </View>
 
-      <ThemedText>Message: {item.message}</ThemedText>
-
-      {item.status === 'pending' && onApprove && onReject && (
-        <View style={styles.buttonRow}>
-          <Button
-            title="Approve"
-            backgroundColor={colors.success}
-            onPress={() => onApprove(item.id)}
-            style={{ flex: 1 }}
-          />
-          <View style={{ width: 10 }} />
-          <Button
-            title="Reject"
-            backgroundColor={colors.danger}
-            onPress={() => onReject(item.id)}
-            style={{ flex: 1 }}
-          />
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <ThemedText>Status: </ThemedText>
+          <ThemedText
+            style={{
+              color:
+                item.status === 'approved'
+                  ? colors.success
+                  : item.status === 'rejected'
+                    ? colors.danger
+                    : colors.textSecondary,
+              fontWeight: 'bold',
+            }}
+          >
+            {item.status}
+          </ThemedText>
         </View>
-      )}
-    </Card>
+
+        <ThemedText>Message: {item.message}</ThemedText>
+
+        {item.status === 'pending' && onApprove && onReject && (
+          <View style={styles.buttonRow}>
+            <Button
+              title="Approve"
+              backgroundColor={colors.success}
+              onPress={() => onApprove(item.id)}
+              style={{ flex: 1 }}
+            />
+            <View style={{ width: 10 }} />
+            <Button
+              title="Reject"
+              backgroundColor={colors.danger}
+              onPress={() => onReject(item.id)}
+              style={{ flex: 1 }}
+            />
+          </View>
+        )}
+      </Card>
+    </TouchableOpacity>
   );
 }
 

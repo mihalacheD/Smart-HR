@@ -2,6 +2,7 @@ export const lightColors = {
   primary: '#6366F1',      // violet-indigo
   secondary: '#06B6D4',    // cyan/aqua
   accent: '#F97316',       // coral/orange
+  accentChat: '#E0E7FF',  // lavandă deschisă, blândă, pastel violet
   success: '#22C55E',      // verde vibrant
   danger: '#EF4444',       // roșu
 
@@ -17,6 +18,7 @@ export const darkColors = {
   primary: '#818CF8',      // violet deschis
   secondary: '#22D3EE',    // cyan deschis
   accent: '#FB923C',       // portocaliu deschis
+  accentChat: '#3730A3',  // indigo închis, elegant
   success: '#4ADE80',      // verde deschis
   danger: '#F87171',       // roșu deschis
 

@@ -52,7 +52,7 @@ export default function MessageBubble({
         style={[
           styles.bubble,
           {
-            backgroundColor: isOwnMessage ? colors.accent : colors.card,
+            backgroundColor: isOwnMessage ? colors.accentChat : colors.card,
             alignSelf: isOwnMessage ? 'flex-end' : 'flex-start',
           },
         ]}
