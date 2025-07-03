@@ -23,7 +23,7 @@ export default function CalendarScreen() {
     new Date().toISOString().split('T')[0]
   );
 
-  const { notes, addNote } = useCalendarNotes(user?.uid ?? '');
+  const { notes, addNote, deleteNote } = useCalendarNotes(user?.uid ?? '');
 
   const handleAddNote = async (note: string) => {
     await addNote(selectedDate, note);
@@ -52,6 +52,7 @@ export default function CalendarScreen() {
     return result;
   }, [notes, selectedDate, colors]);
 
+
   return (
     <ThemedContainer style={{ backgroundColor: colors.background, padding: 16 }}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -69,7 +70,12 @@ export default function CalendarScreen() {
             <FlatList
               data={notesForDate}
               keyExtractor={(item) => item.id}
-              renderItem={({ item }) => <NoteItem note={item.note} />}
+              renderItem={({ item }) => (
+                <NoteItem
+                  note={item.note}
+                  onDelete={() => deleteNote(item.id)}
+                />
+              )}
               ListEmptyComponent={
                 <ThemedText style={{ opacity: 0.6 }}>
                   No notes for this day.
@@ -80,7 +86,7 @@ export default function CalendarScreen() {
             />
           </View>
 
-            <AddNoteForm onAdd={handleAddNote} />
+          <AddNoteForm onAdd={handleAddNote} />
 
         </View>
       </TouchableWithoutFeedback>

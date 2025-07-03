@@ -30,7 +30,7 @@ export default function AddNoteForm({ onAdd }: Props) {
         placeholder="Write a note..."
         placeholderTextColor="#999"
         multiline
-        style={[styles.input, { color: colors.textPrimary, borderColor: colors.border, textAlignVertical: 'top' }]}
+        style={[styles.input, { color: colors.textPrimary, borderColor: colors.border, textAlignVertical: 'center' }]}
       />
       <Button title="Add" onPress={handleSubmit} />
     </KeyboardAvoidingView>
