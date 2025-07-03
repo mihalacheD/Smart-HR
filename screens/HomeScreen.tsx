@@ -23,12 +23,15 @@ import { getDisplayName } from '../utils/getDisplayName';
 import { useEmployees } from '../hooks/useEmployees';
 import { useLastMessage } from '../hooks/useLastMessage';
 import HomeMessageCard from '../components/HomeMessageCard';
+import HomeCalendarCard from '../components/HomeCalendarCard';
+import { useCalendarNotes } from '../hooks/useCalendarNotes';
 
 export default function HomeScreen() {
   const { user, role } = useAuth();
   const { employees } = useEmployees();
   const { lastMessage } = useLastMessage();
   const { toggleTheme, theme } = useThemeContext();
+  const { notes } = useCalendarNotes(user?.uid ?? '');
   const colors = useThemeColors();
   const navigation = useNavigation<NativeStackNavigationProp<RootTabParamList>>();
 
@@ -42,6 +45,9 @@ export default function HomeScreen() {
     await Promise.all([refetchPayslip(), refetchRequest()]);
     setRefreshing(false);
   };
+
+  const today = new Date().toISOString().split('T')[0];
+  const notesForToday = notes.filter(note => note.date === today);
 
   const displayName = getDisplayName(user?.uid, employees, user);
   const welcomeText = role === 'hr' ? 'Welcome, HR' : `Welcome, ${displayName}!`;
@@ -98,12 +104,7 @@ export default function HomeScreen() {
 
 
       {role === 'employee' && (
-        <TouchableOpacity
-          style={[styles.hrBot, { backgroundColor: colors.secondary }]}
-          onPress={() => navigation.navigate('Calendar')}
-        >
-          <Text style={[styles.hrBotText, { color: colors.card }]}>🤖 Deschide HR Bot</Text>
-        </TouchableOpacity>
+          <HomeCalendarCard notesForToday={notesForToday} date={today} />
       )}
 
     </PageContainer>
