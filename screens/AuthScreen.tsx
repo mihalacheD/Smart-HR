@@ -1,11 +1,14 @@
-// src/screens/AuthScreen.tsx
 import React, { useState } from "react";
 import {
   View,
+  Image,
   TextInput,
   StyleSheet,
   ActivityIndicator,
   TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
 } from "react-native";
 import { useAuth } from "../context/AuthContext";
 import { useThemeContext } from "../context/ThemeContext";
@@ -66,97 +69,115 @@ export default function AuthScreen() {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}> 
-      {/* Toggle Login/Signup */}
-      <View style={styles.toggleContainer}>
-        <TouchableOpacity
-          style={[
-            styles.toggleButton,
-            !isSignup && { borderBottomColor: colors.accent },
-          ]}
-          onPress={() => setIsSignup(false)}
-        >
-          <ThemedText style={!isSignup ? styles.activeToggleText : styles.toggleText}>
-            Login
-          </ThemedText>
-        </TouchableOpacity>
+    <KeyboardAvoidingView
+      style={[styles.flex, { backgroundColor: colors.background }]}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
+    >
+      <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+        <Image
+          source={require("../assets/logo-transparent.png")}
+          style={styles.logo}
+          resizeMode="contain"
+        />
 
-        <TouchableOpacity
-          style={[styles.toggleButton, isSignup && { borderBottomColor: colors.accent }]}
-          onPress={() => setIsSignup(true)}
-        >
-          <ThemedText style={isSignup ? styles.activeToggleText : styles.toggleText}>
-            Sign Up
-          </ThemedText>
-        </TouchableOpacity>
-      </View>
+        {/* Toggle Login/Signup */}
+        <View style={styles.toggleContainer}>
+          <TouchableOpacity
+            style={[
+              styles.toggleButton,
+              !isSignup && { borderBottomColor: colors.accent },
+            ]}
+            onPress={() => setIsSignup(false)}
+          >
+            <ThemedText style={!isSignup ? styles.activeToggleText : styles.toggleText}>
+              Login
+            </ThemedText>
+          </TouchableOpacity>
 
-      {/* Email */}
-      <TextInput
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        keyboardType="email-address"
-        style={[styles.input, { borderColor: colors.border, color: colors.textPrimary }]}
-        placeholderTextColor={colors.textSecondary}
-      />
-
-      {/* Password */}
-      <TextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        style={[styles.input, { borderColor: colors.border, color: colors.textPrimary }]}
-        placeholderTextColor={colors.textSecondary}
-      />
-
-      {/* Role selection only on signup */}
-      {isSignup && (
-        <View style={styles.roleContainer}>
-          <ThemedText style={styles.roleLabel}>Select Role:</ThemedText>
-          <View style={styles.roles}>
-            <TouchableOpacity
-              style={[styles.roleButton, role === "employee" && { backgroundColor: colors.accent }]}
-              onPress={() => setRole("employee")}
-            >
-              <ThemedText style={role === "employee" ? styles.roleButtonTextActive : styles.roleButtonText}>
-                Employee
-              </ThemedText>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.roleButton, role === "hr" && { backgroundColor: colors.accent }]}
-              onPress={() => setRole("hr")}
-            >
-              <ThemedText style={role === "hr" ? styles.roleButtonTextActive : styles.roleButtonText}>
-                HR
-              </ThemedText>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            style={[styles.toggleButton, isSignup && { borderBottomColor: colors.accent }]}
+            onPress={() => setIsSignup(true)}
+          >
+            <ThemedText style={isSignup ? styles.activeToggleText : styles.toggleText}>
+              Sign Up
+            </ThemedText>
+          </TouchableOpacity>
         </View>
-      )}
 
-      {/* Error message */}
-      {error && <ThemedText style={styles.errorText}>{error}</ThemedText>}
+        {/* Email */}
+        <TextInput
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          autoCapitalize="none"
+          keyboardType="email-address"
+          style={[styles.input, { borderColor: colors.border, color: colors.textPrimary }]}
+          placeholderTextColor={colors.textSecondary}
+        />
 
-      {/* Submit Button */}
-      <Button
-        title={isSignup ? "Sign Up" : "Login"}
-        onPress={isSignup ? handleSignup : handleLogin}
-        disabled={loading || !email.trim() || !password.trim()}
-        style={{ marginTop: 16 }}
-      />
-    </View>
+        {/* Password */}
+        <TextInput
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          style={[styles.input, { borderColor: colors.border, color: colors.textPrimary }]}
+          placeholderTextColor={colors.textSecondary}
+        />
+
+        {/* Role selection only on signup */}
+        {isSignup && (
+          <View style={styles.roleContainer}>
+            <ThemedText style={styles.roleLabel}>Select Role:</ThemedText>
+            <View style={styles.roles}>
+              {["employee", "hr"].map((r) => (
+                <TouchableOpacity
+                  key={r}
+                  style={[
+                    styles.roleButton,
+                    role === r && { backgroundColor: colors.accent },
+                  ]}
+                  onPress={() => setRole(r as "employee" | "hr")}
+                >
+                  <ThemedText style={role === r ? styles.roleButtonTextActive : styles.roleButtonText}>
+                    {r === "employee" ? "Employee" : "HR"}
+                  </ThemedText>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        )}
+
+        {/* Error message */}
+        {error && <ThemedText style={styles.errorText}>{error}</ThemedText>}
+
+        {/* Submit Button */}
+        <Button
+          title={isSignup ? "Sign Up" : "Login"}
+          onPress={isSignup ? handleSignup : handleLogin}
+          disabled={loading || !email.trim() || !password.trim()}
+          style={{ marginTop: 16 }}
+        />
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  flex: {
     flex: 1,
+  },
+  scrollContainer: {
     padding: 24,
+    paddingBottom: 40,
     justifyContent: "center",
+  },
+  logo: {
+    width: 120,
+    height: 120,
+    alignSelf: "center",
+    marginBottom: 30,
   },
   toggleContainer: {
     flexDirection: "row",
