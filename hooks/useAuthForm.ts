@@ -10,6 +10,8 @@ export function useAuthForm() {
   const [role, setRole] = useState<"employee" | "hr">("employee");
   const [error, setError] = useState<string | null>(null);
 
+  const ALLOW_SIGNUP = false;
+
   const handleLogin = async () => {
     setError(null);
     if (!email.trim() || !password.trim()) {
@@ -25,14 +27,24 @@ export function useAuthForm() {
 
   const handleSignup = async () => {
     setError(null);
+    if (!ALLOW_SIGNUP) {
+      setError("Registration is disabled in this demo.");
+      return;
+    }
+
     if (!email.trim() || !password.trim()) {
       setError("Please enter email and password");
       return;
     }
+
     try {
       await signup(email.trim(), password.trim(), role);
-    } catch (e: any) {
-      setError(e.message || "Signup failed");
+    } catch (e) {
+      if (e.code === "permission-denied") {
+        setError("Registration is disabled in this demo.");
+      } else {
+        setError(getErrorMessage(e));
+      }
     }
   };
 
@@ -50,4 +62,11 @@ export function useAuthForm() {
     loading,
     error,
   };
+}
+
+function getErrorMessage(e: any): string {
+  if (e && typeof e === "object" && "message" in e) {
+    return (e as { message: string }).message;
+  }
+  return "Unknown error occurred";
 }

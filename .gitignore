@@ -41,3 +41,4 @@ firebase-admin.json
 *.key
 *.secret
 
+.env
