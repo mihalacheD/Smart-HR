@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   Image,
@@ -10,55 +10,32 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
-import { useAuth } from "../context/AuthContext";
+
 import { useThemeContext } from "../context/ThemeContext";
 import { lightColors, darkColors } from "../constants/colors";
 import ThemedText from "../components/ThemedText";
 import Button from "../components/Button";
-
-function getErrorMessage(error: unknown): string {
-  if (error && typeof error === "object" && "message" in error) {
-    return (error as { message: string }).message;
-  }
-  return "Unknown error occurred";
-}
+import { useAuthForm } from "../hooks/useAuthForm";
+import RoleSelector from "../components/RoleSelector";
 
 export default function AuthScreen() {
-  const { login, signup, loading } = useAuth();
+  const {
+    isSignup,
+    setIsSignup,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    role,
+    setRole,
+    handleLogin,
+    handleSignup,
+    loading,
+    error,
+  } = useAuthForm();
+
   const { theme } = useThemeContext();
   const colors = theme === "dark" ? darkColors : lightColors;
-
-  const [isSignup, setIsSignup] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [role, setRole] = useState<"employee" | "hr">("employee");
-  const [error, setError] = useState<string | null>(null);
-
-  const handleLogin = async () => {
-    setError(null);
-    if (!email.trim() || !password.trim()) {
-      setError("Please enter email and password");
-      return;
-    }
-    try {
-      await login(email.trim(), password.trim());
-    } catch (e) {
-      setError(getErrorMessage(e));
-    }
-  };
-
-  const handleSignup = async () => {
-    setError(null);
-    if (!email.trim() || !password.trim()) {
-      setError("Please enter email and password");
-      return;
-    }
-    try {
-      await signup(email.trim(), password.trim(), role);
-    } catch (e) {
-      setError(getErrorMessage(e));
-    }
-  };
 
   if (loading) {
     return (
@@ -70,11 +47,10 @@ export default function AuthScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={[styles.flex, { backgroundColor: colors.background }]}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
+      style={[styles.container, { backgroundColor: colors.background }]}
     >
-      <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+      <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
         <Image
           source={require("../assets/logo-transparent.png")}
           style={styles.logo}
@@ -128,25 +104,7 @@ export default function AuthScreen() {
 
         {/* Role selection only on signup */}
         {isSignup && (
-          <View style={styles.roleContainer}>
-            <ThemedText style={styles.roleLabel}>Select Role:</ThemedText>
-            <View style={styles.roles}>
-              {["employee", "hr"].map((r) => (
-                <TouchableOpacity
-                  key={r}
-                  style={[
-                    styles.roleButton,
-                    role === r && { backgroundColor: colors.accent },
-                  ]}
-                  onPress={() => setRole(r as "employee" | "hr")}
-                >
-                  <ThemedText style={role === r ? styles.roleButtonTextActive : styles.roleButtonText}>
-                    {r === "employee" ? "Employee" : "HR"}
-                  </ThemedText>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
+          <RoleSelector role={role} onSelect={setRole} accentColor={colors.accent} />
         )}
 
         {/* Error message */}
@@ -165,19 +123,19 @@ export default function AuthScreen() {
 }
 
 const styles = StyleSheet.create({
-  flex: {
+  container: {
     flex: 1,
   },
-  scrollContainer: {
+  scroll: {
     padding: 24,
-    paddingBottom: 40,
     justifyContent: "center",
+    flexGrow: 1,
   },
   logo: {
     width: 120,
     height: 120,
     alignSelf: "center",
-    marginBottom: 30,
+    marginBottom: 40,
   },
   toggleContainer: {
     flexDirection: "row",
@@ -203,34 +161,6 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     marginBottom: 12,
     fontSize: 16,
-  },
-  roleContainer: {
-    marginBottom: 16,
-  },
-  roleLabel: {
-    marginBottom: 8,
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-  roles: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-  },
-  roleButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 6,
-    borderWidth: 1,
-  },
-  roleButtonText: {
-    fontSize: 16,
-    textAlign: "center",
-  },
-  roleButtonTextActive: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#fff",
-    textAlign: "center",
   },
   errorText: {
     color: "red",
