@@ -1,31 +1,32 @@
 export const lightColors = {
-  primary: '#6366F1',      // violet-indigo
-  secondary: '#06B6D4',    // cyan/aqua
-  accent: '#F97316',       // coral/orange
-  accentChat: '#E0E7FF',  // lavandă deschisă, blândă, pastel violet
-  success: '#22C55E',      // verde vibrant
-  danger: '#EF4444',       // roșu
+  primary: '#4D4DFF',        // neon blue-violet
+  secondary: '#3655B3',      // techy indigo
+  accent: '#8FA9FF',         // electric blue pastel
+  accentChat: '#DAE1FF',     // vibrant chat bubble
+  success: '#00D977',
+  danger: '#FF5A5F',
 
-  background: '#F0F4F8',   // fundal general
-  card: '#FFFFFF',         // fundal carduri
-  border: '#CBD5E1',       // linii subtile
+  background: '#EEF3FF',
+  card: '#FFFFFF',
+  border: '#C7D2FE',
 
-  textPrimary: '#1E293B',  // bleumarin
-  textSecondary: '#475569' // gri închis
+  textPrimary: '#1E293B',
+  textSecondary: '#475569',
 };
 
+
 export const darkColors = {
-  primary: '#818CF8',      // violet deschis
-  secondary: '#22D3EE',    // cyan deschis
-  accent: '#FB923C',       // portocaliu deschis
-  accentChat: '#3730A3',  // indigo închis, elegant
-  success: '#4ADE80',      // verde deschis
-  danger: '#F87171',       // roșu deschis
+  primary: '#B2C2FF',        // contrast cu fundal închis
+  secondary: '#4D4DFF',      // violet puternic
+  accent: '#7C99FF',         // highlight accent
+  accentChat: '#1A1F35',     // elegant dark bubble
+  success: '#4ADE80',
+  danger: '#F87171',
 
-  background: '#0F172A',   // bleumarin foarte închis
-  card: '#1E293B',         // bleumarin mediu
-  border: '#334155',       // gri închis
+  background: '#0B1324',
+  card: '#1C2339',
+  border: '#2B3550',
 
-  textPrimary: '#F8FAFC',  // alb-gri deschis
-  textSecondary: '#CBD5E1' // gri deschis
+  textPrimary: '#F8FAFC',
+  textSecondary: '#CBD5E1',
 };
