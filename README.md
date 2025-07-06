@@ -34,3 +34,16 @@ SmartHR is a modern React Native mobile app designed to simplify HR processes fo
 - [react-native-reanimated](https://docs.swmansion.com/react-native-reanimated/)
 - [TailwindCSS for RN (Nativewind)](https://www.nativewind.dev/)
 
+## Live Demo
+
+You can test the **SmartHR** app directly on your phone using **Expo Go**:
+
+1. Install [Expo Go](https://expo.dev/go) from the App Store or Google Play.
+2. Scan the QR code below with your phone camera or open it using Expo Go.
+
+![SmartHR QR Code](./smarthr_qr_code.png)
+
+
+Alternatively, open this link on your mobile device:
+[https://expo.dev/accounts/mihalached/projects/SmartHR/updates/3720f312-6233-4a96-b68a-90b441baf259](https://expo.dev/accounts/mihalached/projects/SmartHR/updates/3720f312-6233-4a96-b68a-90b441baf259)
+
