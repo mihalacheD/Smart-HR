@@ -11,6 +11,8 @@ import {
 import { db } from "../firebaseConfig";
 import { useAuth } from "../context/AuthContext";
 import { Alert } from "react-native";
+import { isDemoUser } from "../utils/isDemoUser";
+import { showDemoAlert } from "../utils/showDemoAlert";
 
 export type Employee = {
   id: string;
@@ -27,10 +29,9 @@ export function useEmployees() {
   const [loading, setLoading] = useState(true);
 
   const fetchEmployees = useCallback(async () => {
-
     try {
       const usersRef = collection(db, "users");
-      const q = query(usersRef, where('role', 'in', ['employee', 'hr']));
+      const q = query(usersRef, where("role", "in", ["employee", "hr"]));
       const snapshot = await getDocs(q);
       const items = snapshot.docs.map((doc) => {
         const data = doc.data();
@@ -53,6 +54,11 @@ export function useEmployees() {
   }, [role]);
 
   const deleteEmployee = async (id: string) => {
+    if (isDemoUser(role)) {
+      showDemoAlert();
+      return;
+    }
+
     try {
       await deleteDoc(doc(db, "users", id));
       Alert.alert("Employee deleted");

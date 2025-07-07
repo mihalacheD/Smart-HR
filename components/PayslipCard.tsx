@@ -9,6 +9,8 @@ import { deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import { useEmployees } from '../hooks/useEmployees';
 import { getDisplayName } from '../utils/getDisplayName';
+import { isDemoUser } from '../utils/isDemoUser';
+import { showDemoAlert } from '../utils/showDemoAlert';
 
 interface Props {
   item: any;
@@ -43,16 +45,21 @@ export default function PayslipCard({ item, role, onDeleted }: Props) {
           onPress={() => Alert.alert(`Downloading ${item.file}`)}
           style={{ flex: 1 }}
         />
-        {role === 'hr' && (
+        {(role === 'hr' || role === 'demo-hr') && (
           <Button
             title="Delete"
             backgroundColor={colors.danger}
-            onPress={() =>
+            onPress={() => {
+              if (isDemoUser(role)) {
+                showDemoAlert();
+                return;
+              }
+
               Alert.alert('Confirm Delete', 'Are you sure?', [
                 { text: 'Cancel', style: 'cancel' },
                 { text: 'Delete', style: 'destructive', onPress: handleDeletePayslip },
-              ])
-            }
+              ]);
+            }}
             style={{ flex: 1, marginLeft: 10 }}
           />
         )}

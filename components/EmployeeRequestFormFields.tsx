@@ -10,16 +10,19 @@ import { db } from '../firebaseConfig';
 import { useThemeContext } from '../context/ThemeContext';
 import { lightColors, darkColors } from '../constants/colors';
 import { formatDateLabel } from '../utils/formatDate';
+import { isDemoUser } from '../utils/isDemoUser';
+import { showDemoAlert } from '../utils/showDemoAlert';
 
 const requestTypes = ['Holiday', 'Work from home', 'Medical'];
 
 interface Props {
   userId: string;
   userEmail: string;
+  role: string,
   onSuccess: () => void;
 }
 
-export default function EmployeeRequestFormFields({ userId, userEmail, onSuccess }: Props) {
+export default function EmployeeRequestFormFields({ userId, userEmail, role, onSuccess }: Props) {
   const { theme } = useThemeContext();
   const colors = theme === 'dark' ? darkColors : lightColors;
 
@@ -31,6 +34,11 @@ export default function EmployeeRequestFormFields({ userId, userEmail, onSuccess
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
+    if (isDemoUser(role)) {
+      showDemoAlert();
+      return;
+    }
+
     if (!type || !fromDate || !toDate) {
       Alert.alert('Please complete all required fields.');
       return;
@@ -173,7 +181,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 5,
   },
-    title: {
+  title: {
     fontSize: 30,
     fontWeight: '600',
     marginBottom: 16,

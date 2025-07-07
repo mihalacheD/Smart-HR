@@ -16,7 +16,7 @@ export function usePayslips(selectedYear: number) {
     try {
       const payslipRef = collection(db, 'payslips');
       const q: Query<unknown, DocumentData> =
-        role === 'hr'
+        (role === 'hr' || role === 'demo-hr')
           ? query(payslipRef, where('year', '==', selectedYear))
           : query(payslipRef, where('userId', '==', user.uid), where('year', '==', selectedYear));
 

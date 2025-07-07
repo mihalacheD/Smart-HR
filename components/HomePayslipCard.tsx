@@ -19,7 +19,7 @@ export default function HomePayslipCard({ recentPayslip, loadingPayslip, role }:
   const navigation = useNavigation<NativeStackNavigationProp<RootTabParamList>>();
   const { employees } = useEmployees();
 
-  const payslipCardTitle = role === 'hr' ? 'Most Recent Payslip in System' : 'Your Most Recent Payslip';
+  const payslipCardTitle = (role === 'hr' || role === 'demo-hr')? 'Most Recent Payslip in System' : 'Your Most Recent Payslip';
 
   if (loadingPayslip) {
     return (
@@ -32,7 +32,7 @@ export default function HomePayslipCard({ recentPayslip, loadingPayslip, role }:
   if (!recentPayslip) {
     return (
       <Card title={payslipCardTitle}>
-        <ThemedText>{role === 'hr' ? 'No payslips found in the system.' : 'You have no payslips yet.'}</ThemedText>
+        <ThemedText>{(role === 'hr' || role === 'demo-hr') ? 'No payslips found in the system.' : 'You have no payslips yet.'}</ThemedText>
       </Card>
     );
   }
@@ -48,7 +48,7 @@ export default function HomePayslipCard({ recentPayslip, loadingPayslip, role }:
         onButtonPress={() => navigation.navigate('Payslip')}
       >
         {
-        role === 'hr' && <ThemedText>
+        (role === 'hr' || role === 'demo-hr') && <ThemedText>
           Employee: {employeeName}</ThemedText>
         }
         <ThemedText>Month: {recentPayslip.month}</ThemedText>

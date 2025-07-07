@@ -10,6 +10,8 @@ import TitleHeader from './TitleHeader';
 import { useDeleteRequest } from '../hooks/useDeleteRequest';
 import SwipeToDelete from './SwipeToDelete';
 import { useAuth } from '../context/AuthContext';
+import { isDemoUser } from '../utils/isDemoUser';
+import { showDemoAlert } from '../utils/showDemoAlert';
 
 export default function HRRequestsList() {
   const { role } = useAuth();
@@ -17,6 +19,11 @@ export default function HRRequestsList() {
   const { deleteRequest } = useDeleteRequest(refetch);
 
   const updateStatus = async (id: string, status: 'approved' | 'rejected') => {
+    if (isDemoUser(role)) {
+      showDemoAlert();
+      return;
+    }
+
     try {
       await updateDoc(doc(db, 'requests', id), { status });
       refetch();
@@ -24,6 +31,7 @@ export default function HRRequestsList() {
       Alert.alert('Error updating status');
     }
   };
+
 
   if (loading || requests.length === 0) {
     return (
@@ -47,8 +55,8 @@ export default function HRRequestsList() {
         contentContainerStyle={{ padding: 20 }}
         renderItem={({ item }) => {
           const allowDelete =
-            (role === 'hr' && ['approved', 'rejected'].includes(item.status)) ||
-            (role === 'employee')
+            ((role === 'hr' || role === 'demo-hr') && ['approved', 'rejected'].includes(item.status)) ||
+            (role === 'employee' || role === 'demo-employee')
 
           const card = (
             <RequestCard

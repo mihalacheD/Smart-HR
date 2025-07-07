@@ -25,7 +25,7 @@ export function useRecentRequest(userId: string | null, role: string) {
     try {
       const ref = collection(db, 'requests');
       const q =
-        role === 'hr'
+       (role === 'hr' || role === 'demo-hr')
           ? query(ref, orderBy('createdAt', 'desc'), limit(1))
           : query(ref, where('userId', '==', userId), orderBy('createdAt', 'desc'), limit(1));
 

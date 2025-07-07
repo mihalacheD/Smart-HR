@@ -5,22 +5,26 @@ SmartHR is a modern React Native mobile app designed to simplify HR processes fo
 ## ✨ Features
 
 ### 🔒 Authentication
+
 - Firebase Auth with role-based access (`employee`, `hr`)
 - Secure login and protected routes
 
 ### 👩‍🏫 For HR users
+
 - Add/view/delete employees
 - Upload payslips for each employee
 - Respond to leave or custom requests
 - Internal chat with employees
 
 ### 🧑‍💼 For Employees
+
 - View personal payslips
 - Submit requests (leave, custom)
 - View personal notes in calendar
 - Chat with HR and colleagues
 
 ### ☁️ Backend
+
 - Firebase Firestore
 - Firebase Storage
 - Firebase Auth
@@ -43,7 +47,14 @@ You can test the **SmartHR** app directly on your phone using **Expo Go**:
 
 ![SmartHR QR Code](./smarthr_qr_code.png)
 
-
 Alternatively, open this link on your mobile device:
 [https://expo.dev/accounts/mihalached/projects/SmartHR/updates/3720f312-6233-4a96-b68a-90b441baf259](https://expo.dev/accounts/mihalached/projects/SmartHR/updates/3720f312-6233-4a96-b68a-90b441baf259)
 
+🔐 Demo Accounts
+
+You can log in with the following demo credentials:
+Email Password
+demo.hr@example.com demo1234
+demo.employee1@ex.com demo1234
+
+    ✅ These accounts are read-only. Some actions (like adding, deleting, or editing data) will show a demo alert instead of performing the actual operation.

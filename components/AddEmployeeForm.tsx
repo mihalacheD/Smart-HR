@@ -6,8 +6,12 @@ import Button from './Button';
 import ThemedText from './ThemedText';
 import { useThemeContext } from '../context/ThemeContext';
 import { darkColors, lightColors } from '../constants/colors';
+import { useAuth } from '../context/AuthContext';
+import { showDemoAlert } from '../utils/showDemoAlert';
+import { isDemoUser } from '../utils/isDemoUser';
 
 export default function AddEmployeeForm({ onAdded }: { onAdded?: () => void }) {
+  const { role } = useAuth();
   const { theme } = useThemeContext();
   const colors = theme === 'dark' ? darkColors : lightColors;
 
@@ -17,6 +21,11 @@ export default function AddEmployeeForm({ onAdded }: { onAdded?: () => void }) {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
+    if (isDemoUser(role)) {
+      showDemoAlert();
+      return;
+    }
+
     if (!fullName || !email || !position) {
       Alert.alert('Please fill in all fields');
       return;
@@ -43,6 +52,7 @@ export default function AddEmployeeForm({ onAdded }: { onAdded?: () => void }) {
       setLoading(false);
     }
   };
+
 
   return (
     <View style={[styles.container, { backgroundColor: colors.card }]}>

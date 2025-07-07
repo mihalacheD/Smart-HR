@@ -8,6 +8,9 @@ import { lightColors, darkColors } from '../constants/colors';
 import { useEmployees } from '../hooks/useEmployees';
 import { addDoc, collection } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
+import { useAuth } from '../context/AuthContext';
+import { isDemoUser } from '../utils/isDemoUser';
+import { showDemoAlert } from '../utils/showDemoAlert';
 
 
 interface Props {
@@ -17,6 +20,7 @@ interface Props {
 
 export default function AddPayslipForm({ selectedYear, onAdded }: Props) {
   const { employees } = useEmployees();
+  const { role } = useAuth();
   const { theme } = useThemeContext();
   const colors = theme === 'dark' ? darkColors : lightColors;
 
@@ -25,42 +29,48 @@ export default function AddPayslipForm({ selectedYear, onAdded }: Props) {
 
   const selectedEmployee = employees.find(emp => emp.uid === newPayslip.userId);
 
-  const handleAddPayslip = async () => {
-    try {
-      const { userId, month, file } = newPayslip;
-      const year = selectedYear;
+const handleAddPayslip = async () => {
+  if (isDemoUser(role)) {
+    showDemoAlert();
+    return;
+  }
 
-      if (!userId || !month || !file) {
-        Alert.alert('All fields are required');
-        return;
-      }
+  try {
+    const { userId, month, file } = newPayslip;
+    const year = selectedYear;
 
-      const months = [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
-      ];
-      const monthIndex = months.indexOf(month);
-      if (monthIndex === -1) {
-        Alert.alert('Invalid month');
-        return;
-      }
-
-      const orderIndex = year * 100 + (monthIndex + 1);
-
-      await addDoc(collection(db, 'payslips'), {
-        ...newPayslip,
-        year,
-        orderIndex,
-      });
-
-      setNewPayslip({ month: '', userId: '', file: '' });
-      onAdded();
-      Alert.alert('Payslip added');
-    } catch (error) {
-      Alert.alert('Error adding payslip');
-      console.error('Add payslip error:', error);
+    if (!userId || !month || !file) {
+      Alert.alert('All fields are required');
+      return;
     }
-  };
+
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    const monthIndex = months.indexOf(month);
+    if (monthIndex === -1) {
+      Alert.alert('Invalid month');
+      return;
+    }
+
+    const orderIndex = year * 100 + (monthIndex + 1);
+
+    await addDoc(collection(db, 'payslips'), {
+      ...newPayslip,
+      year,
+      orderIndex,
+    });
+
+    setNewPayslip({ month: '', userId: '', file: '' });
+    onAdded();
+    Alert.alert('Payslip added');
+  } catch (error) {
+    Alert.alert('Error adding payslip');
+    console.error('Add payslip error:', error);
+  }
+};
+
 
   return (
     <View style={{ marginBottom: 20, gap: 10 }}>

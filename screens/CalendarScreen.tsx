@@ -15,9 +15,11 @@ import ThemedText from '../components/ThemedText';
 import AddNoteForm from '../components/AddNoteForm';
 import NoteItem from '../components/NoteItem';
 import ThemedCalendar from '../components/ThemedCalendar';
+import { isDemoUser } from '../utils/isDemoUser';
+import { showDemoAlert } from '../utils/showDemoAlert';
 
 export default function CalendarScreen() {
-  const { user } = useAuth();
+  const { user, role } = useAuth();
   const colors = useThemeColors();
   const [selectedDate, setSelectedDate] = useState<string>(
     new Date().toISOString().split('T')[0]
@@ -26,6 +28,10 @@ export default function CalendarScreen() {
   const { notes, addNote, deleteNote } = useCalendarNotes(user?.uid ?? '');
 
   const handleAddNote = async (note: string) => {
+    if (isDemoUser(role)) {
+      showDemoAlert();
+      return;
+    }
     await addNote(selectedDate, note);
   };
 

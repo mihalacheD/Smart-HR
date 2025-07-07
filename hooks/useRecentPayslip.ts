@@ -15,7 +15,7 @@ export function useRecentPayslip(userId: string | null, role: string | null) {
       const payslipRef = collection(db, 'payslips');
       let q: Query<unknown, DocumentData>;
 
-      if (role === 'hr') {
+      if (role === 'hr' || role === 'demo-hr') {
         q = query(payslipRef, orderBy('orderIndex', 'desc'), limit(1));
       } else {
         q = query(payslipRef, where('userId', '==', userId), orderBy('orderIndex', 'desc'), limit(1));

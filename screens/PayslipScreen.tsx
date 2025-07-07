@@ -28,7 +28,7 @@ export default function PayslipScreen() {
           <>
             <TitleHeader title="Payslip" />
             <YearPickerModal selectedYear={selectedYear} onChange={setSelectedYear} />
-            {role === 'hr' && (
+            {(role === 'hr' || role === 'demo-hr') && (
               <AddPayslipForm selectedYear={selectedYear} onAdded={fetchPayslips} />
             )}
             {loading && (

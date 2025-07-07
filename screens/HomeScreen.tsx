@@ -46,7 +46,7 @@ export default function HomeScreen() {
   const notesForToday = notes.filter(note => note.date === today);
 
   const displayName = getDisplayName(user?.uid, employees, user);
-  const welcomeText = role === 'hr' ? 'Welcome, HR' : `Welcome, ${displayName}!`;
+  const welcomeText = (role === 'hr' || role === 'demo-hr')? 'Welcome, HR' : `Welcome, ${displayName}!`;
 
   return (
     <PageContainer
@@ -98,7 +98,7 @@ export default function HomeScreen() {
       )}
 
 
-      {role === 'employee' && (
+      {(role === 'employee' || role === 'demo-employee') && (
         <HomeCalendarCard notesForToday={notesForToday} date={today} />
       )}
 

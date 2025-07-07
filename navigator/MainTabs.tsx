@@ -83,7 +83,7 @@ export default function MainTabs() {
           ),
         }}
       />
-      {role === 'employee' && (
+      {(role === 'employee' || role === 'demo-employee') &&(
         <Tab.Screen
           name="Calendar"
           component={CalendarScreen}
@@ -95,7 +95,7 @@ export default function MainTabs() {
         />
       )}
 
-      {role === 'hr' && (
+      {(role === 'hr' || role === 'demo-hr') && (
         <Tab.Screen
           name="Employees"
           component={EmployeesScreen}

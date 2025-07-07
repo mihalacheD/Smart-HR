@@ -11,6 +11,8 @@ import ThemedText from '../components/ThemedText';
 import ThemedContainer from '../components/ThemedContainer';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
+import { isDemoUser } from '../utils/isDemoUser';
+import { showDemoAlert } from '../utils/showDemoAlert';
 
 function parseTimestamp(timestamp: any): Date | null {
   if (timestamp?.toDate) return timestamp.toDate();
@@ -72,7 +74,16 @@ export default function ChatScreen() {
           )}
         </View>
 
-        <MessageInput onSend={(text: string) => sendMessage(user?.uid ?? '', text)} />
+        <MessageInput
+          onSend={(text: string) => {
+            if (isDemoUser(role)) {
+              showDemoAlert();
+              return;
+            }
+            sendMessage(user?.uid ?? '', text);
+          }}
+        />
+
       </KeyboardAvoidingView>
     </ThemedContainer>
   );

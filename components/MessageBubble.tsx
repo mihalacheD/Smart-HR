@@ -61,7 +61,7 @@ export default function MessageBubble({
         <Text style={[styles.time, { color: colors.textSecondary }]}>{timeStr}</Text>
 
 
-        {isOwnMessage && role === 'hr' && (
+        {isOwnMessage && (role === 'hr' || role === 'demo-hr') && (
           <TouchableOpacity onPress={onToggleImportant} style={styles.toggleButton}>
             <Ionicons
               name={important ? 'star' : 'star-outline'}

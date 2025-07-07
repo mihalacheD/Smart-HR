@@ -37,6 +37,7 @@ export default function EmployeeRequestForm() {
             <TitleHeader title="Requests" />
             <EmployeeRequestFormFields
               userId={user.uid}
+              role={role}
               userEmail={user.email ?? ''}
               onSuccess={refetch}
             />
@@ -44,8 +45,8 @@ export default function EmployeeRequestForm() {
         }
         renderItem={({ item }) => {
           const allowDelete =
-            (role === 'hr' && ['approved', 'rejected'].includes(item.status)) ||
-            (role === 'employee')
+            ((role === 'hr' || role === 'demo-hr') && ['approved', 'rejected'].includes(item.status)) ||
+            (role === 'employee' || role === 'demo-employee')
 
           const card = (
             <RequestCard

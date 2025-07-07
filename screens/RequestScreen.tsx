@@ -6,6 +6,6 @@ import EmployeeRequestForm from '../components/EmployeeRequestForm';
 export default function RequestsScreen() {
   const { role } = useAuth();
 
-  if (role === 'hr') return <HRRequestsList />;
+  if (role === 'hr' || role === 'demo-hr') return <HRRequestsList />;
   return <EmployeeRequestForm />;
 }

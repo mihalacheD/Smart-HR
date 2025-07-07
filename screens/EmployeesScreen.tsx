@@ -7,11 +7,15 @@ import { Employee, useEmployees } from '../hooks/useEmployees';
 import LoadingOrEmpty from '../components/LoadingOrEmpty';
 import EmployeeCard from '../components/EmployeeCard';
 import EditEmployeeForm from '../components/EditEmployeeForm';
+import { useAuth } from '../context/AuthContext';
+import { isDemoUser } from '../utils/isDemoUser';
+import { showDemoAlert } from '../utils/showDemoAlert';
 
 
 
 export default function EmployeesScreen() {
 
+  const { role } = useAuth();
   const { employees, loading, fetchEmployees, deleteEmployee, updateEmployee } = useEmployees();
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
@@ -23,12 +27,17 @@ export default function EmployeesScreen() {
 
 
   const handleUpdate = (id: string) => {
+    if (isDemoUser(role)) {
+      showDemoAlert();
+      return;
+    }
     const employee = employees.find(e => e.id === id);
     if (employee) {
       setSelectedEmployee(employee);
       setEditModalVisible(true);
     }
   };
+
 
 
 
@@ -59,7 +68,7 @@ export default function EmployeesScreen() {
         keyboardShouldPersistTaps="handled"
       />
 
-       {selectedEmployee && (
+      {selectedEmployee && (
         <EditEmployeeForm
           employee={selectedEmployee}
           visible={editModalVisible}
