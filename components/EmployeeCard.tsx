@@ -38,8 +38,8 @@ export default function EmployeeCard({
 
   return (
     <Card title={fullName ?? email} iconName="account">
+      <ThemedText>Full Name: {fullName}</ThemedText>
       <ThemedText>Email: {email}</ThemedText>
-      <ThemedText>ID: {id}</ThemedText>
       <ThemedText>Role: {role}</ThemedText>
       {position && <ThemedText>Position: {position}</ThemedText>}
 
