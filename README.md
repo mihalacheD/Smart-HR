@@ -38,23 +38,25 @@ SmartHR is a modern React Native mobile app designed to simplify HR processes fo
 - [react-native-reanimated](https://docs.swmansion.com/react-native-reanimated/)
 - [TailwindCSS for RN (Nativewind)](https://www.nativewind.dev/)
 
-## Live Demo
+## 🚀 SmartHR Demo (Expo Go)
 
-You can test the **SmartHR** app directly on your phone using **Expo Go**:
+You can test the SmartHR app directly on your phone using **Expo Go**:
 
-1. Install [Expo Go](https://expo.dev/go) from the App Store or Google Play.
-2. Scan the QR code below with your phone camera or open it using Expo Go.
+1. Install Expo Go:
+   - [App Store (iPhone)](https://apps.apple.com/app/expo-go/id982107779)
+   - [Google Play (Android)](https://play.google.com/store/apps/details?id=host.exp.exponent)
+2. Open this link:
+   👉 [SmartHR Live Demo](https://expo.dev/accounts/mihalached/projects/SmartHR/updates/dbe0d9dd-7bec-4cd4-acf2-1b3a3e1a8494)
+
+3. Or scan the QR code below:
 
 ![SmartHR QR Code](./smarthr_qr_code.png)
 
-Alternatively, open this link on your mobile device:
-[https://expo.dev/accounts/mihalached/projects/SmartHR/updates/3720f312-6233-4a96-b68a-90b441baf259](https://expo.dev/accounts/mihalached/projects/SmartHR/updates/3720f312-6233-4a96-b68a-90b441baf259)
+### 🔐 Demo Credentials
 
-🔐 Demo Accounts
-
-You can log in with the following demo credentials:
-Email Password
-demo.hr@example.com demo1234
-demo.employee1@ex.com demo1234
+| Email                 | Password | Role     |
+| --------------------- | -------- | -------- |
+| demo.hr@example.com   | demo1234 | HR       |
+| demo.employee1@ex.com | demo1234 | Employee |
 
     ✅ These accounts are read-only. Some actions (like adding, deleting, or editing data) will show a demo alert instead of performing the actual operation.
